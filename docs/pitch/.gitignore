@@ -1,0 +1,7 @@
+.hyperframes/
+.media/
+node_modules/
+*.log
+output/
+composition/snapshots/
+composition/.media/

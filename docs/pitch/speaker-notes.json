@@ -1,0 +1,74 @@
+[
+  {
+    "slide": 1,
+    "notes": "Trace is a local webcam experiment for the part of shopping that happens before checkout. I built it to explore whether broad shelf gaze estimates can give retailers useful evidence about browsing.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md",
+      "Cover: AI-generated conceptual illustration, not a photograph of an installed system."
+    ]
+  },
+  {
+    "slide": 2,
+    "notes": "A receipt records what someone bought. It leaves questions about what they browsed first. Trace starts with a narrower question: which broad shelf zones receive sustained estimated gaze, and how does that pattern change?",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#description",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#path-to-trend-forecasting"
+    ]
+  },
+  {
+    "slide": 3,
+    "notes": "The operator enters the shelf measurements. A webcam estimates gaze towards three zones, groups observations into temporary visits and measures dwell. Unclear observations remain unassigned. This real interface capture has the camera off and contains no shopper observations.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#features",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#current-limits",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/docs/screenshots/readme-shelf-gaze-2026-10-03.jpg"
+    ]
+  },
+  {
+    "slide": 4,
+    "notes": "Sustained estimated gaze can trigger an example offer on a separate screen. The default threshold is one and a half seconds. These captures show the real interfaces with the camera off. They demonstrate the controls, rather than physical gaze accuracy.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#features",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#customer-display",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/docs/screenshots/readme-customer-idle-2026-10-03.jpg",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/main/docs/videos/trace-ui-walkthrough.mp4"
+    ]
+  },
+  {
+    "slide": 5,
+    "notes": "Processing runs on the local computer. I built the service, shelf geometry, visit logic and interfaces for EAT_HACK. The pretrained Open Model Zoo models and upstream gaze demo existed beforehand and are credited in the repository.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/ARCHITECTURE.md",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#contributing",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/model-provenance.json",
+      "https://masterasnackin.github.io/trace-eat-hack/#focus=state-api&reach=downstream"
+    ]
+  },
+  {
+    "slide": 6,
+    "notes": "The recorded software checks include 68 Python tests, 19 JavaScript tests and browser recovery scenarios. Physical shelf accuracy still needs measurement. Trace does not currently recognise products, detect purchases or identify returning customers.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/docs/AUDIT.md#automated-and-model-verification",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/docs/AUDIT.md#browser-verification",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#current-limits"
+    ]
+  },
+  {
+    "slide": 7,
+    "notes": "Forecasting is proposed work. First, validate and save comparable daily measurements. Then account for shelf changes and compare against search interest or sales. Test on later periods and keep extra signals only if they improve on a simple baseline.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#path-to-trend-forecasting",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#current-limits"
+    ]
+  },
+  {
+    "slide": 8,
+    "notes": "The next step is a labelled shelf trial across realistic conditions. That will tell us whether the measurements are reliable enough to use, before asking whether they improve a forecast. The code and interactive system map are public.",
+    "sources": [
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/README.md#roadmap",
+      "https://github.com/MasteraSnackin/trace-eat-hack/blob/0229052/docs/RESEARCH.md",
+      "https://github.com/MasteraSnackin/trace-eat-hack",
+      "https://masterasnackin.github.io/trace-eat-hack/#focus=state-api&reach=downstream"
+    ]
+  }
+]

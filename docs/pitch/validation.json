@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 1,
+  "cliVersion": "0.8.114",
+  "source": "composition/index.html",
+  "sourceSha256": "236361dd10abb8ca29c85c40db62be2197fcc1f88acd11e3bd9d1fbec193d4a1",
+  "ok": true,
+  "sceneCount": 8,
+  "sampledTimes": 59,
+  "contrastChecks": 355,
+  "limitations": [
+    "Per-slide fixtures preserve the scene DOM, CSS and GSAP statements, with absolute times normalised to zero.",
+    "The standalone navigation bridge and presenter/audience integration require a separate browser acceptance check.",
+    "Sampled checks are not continuous-frame validation. No MP4 was rendered."
+  ],
+  "results": [
+    {
+      "sceneId": "cover",
+      "sourceStart": 0,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 2,
+      "contrastChecked": 27,
+      "snapshots": [
+        "cover/snapshots/frame-00-at-0.1s.png",
+        "cover/snapshots/frame-01-at-0.3s.png",
+        "cover/snapshots/frame-02-at-0.6s.png",
+        "cover/snapshots/frame-03-at-0.9s.png",
+        "cover/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "cover/check.json",
+      "motionSamples": 241
+    },
+    {
+      "sceneId": "problem",
+      "sourceStart": 12,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        1.5,
+        4.5,
+        7.5,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 10,
+      "contrastChecked": 37,
+      "snapshots": [
+        "problem/snapshots/frame-00-at-0.1s.png",
+        "problem/snapshots/frame-01-at-0.6s.png",
+        "problem/snapshots/frame-02-at-1.0s.png",
+        "problem/snapshots/frame-03-at-4.5s.png",
+        "problem/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "problem/check.json",
+      "motionSamples": 241
+    },
+    {
+      "sceneId": "shelf",
+      "sourceStart": 24,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 2,
+      "contrastChecked": 41,
+      "snapshots": [
+        "shelf/snapshots/frame-00-at-0.1s.png",
+        "shelf/snapshots/frame-01-at-0.3s.png",
+        "shelf/snapshots/frame-02-at-0.6s.png",
+        "shelf/snapshots/frame-03-at-0.9s.png",
+        "shelf/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "shelf/check.json",
+      "motionSamples": 241
+    },
+    {
+      "sceneId": "offers",
+      "sourceStart": 36,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 2,
+      "contrastChecked": 40,
+      "snapshots": [
+        "offers/snapshots/frame-00-at-0.1s.png",
+        "offers/snapshots/frame-01-at-0.3s.png",
+        "offers/snapshots/frame-02-at-0.6s.png",
+        "offers/snapshots/frame-03-at-0.9s.png",
+        "offers/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "offers/check.json",
+      "motionSamples": 241
+    },
+    {
+      "sceneId": "processing",
+      "sourceStart": 48,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        1.5,
+        4.5,
+        7.5,
+        10.5,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 13,
+      "contrastChecked": 62,
+      "snapshots": [
+        "processing/snapshots/frame-00-at-0.1s.png",
+        "processing/snapshots/frame-01-at-0.6s.png",
+        "processing/snapshots/frame-02-at-1.0s.png",
+        "processing/snapshots/frame-03-at-4.5s.png",
+        "processing/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "processing/check.json",
+      "motionSamples": 241
+    },
+    {
+      "sceneId": "evidence",
+      "sourceStart": 60,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 2,
+      "contrastChecked": 51,
+      "snapshots": [
+        "evidence/snapshots/frame-00-at-0.1s.png",
+        "evidence/snapshots/frame-01-at-0.3s.png",
+        "evidence/snapshots/frame-02-at-0.6s.png",
+        "evidence/snapshots/frame-03-at-0.9s.png",
+        "evidence/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "evidence/check.json",
+      "motionSamples": 241
+    },
+    {
+      "sceneId": "forecast",
+      "sourceStart": 72,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        1.5,
+        4.5,
+        7.5,
+        10.5,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 13,
+      "motionSamples": 241,
+      "contrastChecked": 46,
+      "snapshots": [
+        "forecast/snapshots/frame-00-at-0.1s.png",
+        "forecast/snapshots/frame-01-at-0.6s.png",
+        "forecast/snapshots/frame-02-at-1.0s.png",
+        "forecast/snapshots/frame-03-at-4.5s.png",
+        "forecast/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "forecast/check.json"
+    },
+    {
+      "sceneId": "trial",
+      "sourceStart": 84,
+      "duration": 12,
+      "exitCode": 0,
+      "ok": true,
+      "browserSkipped": false,
+      "samples": [
+        0.15,
+        0.35,
+        0.6,
+        0.9,
+        1,
+        11.5
+      ],
+      "sections": {
+        "lint": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "runtime": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "layout": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "motion": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        "contrast": {
+          "errorCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      },
+      "motionAssertions": 2,
+      "contrastChecked": 51,
+      "snapshots": [
+        "trial/snapshots/frame-00-at-0.1s.png",
+        "trial/snapshots/frame-01-at-0.3s.png",
+        "trial/snapshots/frame-02-at-0.6s.png",
+        "trial/snapshots/frame-03-at-0.9s.png",
+        "trial/snapshots/frame-04-at-11.5s.png"
+      ],
+      "auditFile": "trial/check.json",
+      "motionSamples": 241
+    }
+  ],
+  "motionSamples": 1928,
+  "recheck": "The original forecast footnote overlapped the footer. The copy and its width were corrected, and the revised slide passed. Exact fixture and asset comparisons confirmed that the seven retained scene checks match the final source; only an unused forecast CSS rule differs in those seven fixtures."
+}

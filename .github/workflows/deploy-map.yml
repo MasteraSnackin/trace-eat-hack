@@ -1,10 +1,11 @@
-name: Publish the Trace system map
+name: Publish the Trace map and pitch
 
 on:
   push:
     branches: [main]
     paths:
       - docs/diagrams/trace-system.html
+      - docs/pitch/**
       - .github/workflows/deploy-map.yml
   workflow_dispatch:
 
@@ -25,7 +26,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Check out the map
+      - name: Check out the static documents
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
@@ -33,16 +34,22 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
-      - name: Prepare the static map
+      - name: Prepare the map and pitch presentation
         shell: bash
         run: |
           mkdir "$RUNNER_TEMP/trace-map-site"
           cp docs/diagrams/trace-system.html "$RUNNER_TEMP/trace-map-site/index.html"
+          mkdir -p "$RUNNER_TEMP/trace-map-site/pitch/composition/assets" "$RUNNER_TEMP/trace-map-site/pitch/player"
+          cp docs/pitch/index.html "$RUNNER_TEMP/trace-map-site/pitch/index.html"
+          cp docs/pitch/composition/index.html docs/pitch/composition/standalone.js "$RUNNER_TEMP/trace-map-site/pitch/composition/"
+          cp docs/pitch/composition/assets/cover.png docs/pitch/composition/assets/shelf.jpg docs/pitch/composition/assets/display.jpg docs/pitch/composition/assets/gsap.min.js "$RUNNER_TEMP/trace-map-site/pitch/composition/assets/"
+          cp docs/pitch/player/hyperframes-player.global.js docs/pitch/player/hyperframes-slideshow.global.js docs/pitch/player/LICENSE-HYPERFRAMES "$RUNNER_TEMP/trace-map-site/pitch/player/"
+          cp docs/pitch/player/THIRD-PARTY.md "$RUNNER_TEMP/trace-map-site/pitch/player/THIRD-PARTY.md"
           touch "$RUNNER_TEMP/trace-map-site/.nojekyll"
           cmp docs/diagrams/trace-system.html "$RUNNER_TEMP/trace-map-site/index.html"
 
-      # Upload only the self-contained map, without the webcam app or API.
-      - name: Upload the map
+      # Publish only static presentation assets and the map. Camera code and API stay local.
+      - name: Upload the static site
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: ${{ runner.temp }}/trace-map-site

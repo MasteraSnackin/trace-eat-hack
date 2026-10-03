@@ -12,9 +12,13 @@ Physical gaze accuracy remains unverified. Estimated gaze does not establish pre
 
 ## Pitch deck
 
+[Open the animated HyperFrames presentation](https://masterasnackin.github.io/trace-eat-hack/pitch/)
+
 [Download the editable PowerPoint](docs/slides/Trace-EAT-HACK-judges-pitch.pptx)
 
 Eight slides for the EAT_HACK judges, with speaker notes for approximately two minutes. The deck covers the problem, working prototype, local processing, validation and proposed forecasting, and links to the public demos and repository.
+
+The browser presentation adds animated entrances and staged reveals. Use the arrow keys or Next to advance. Click **Present**, or press **P**, to open an audience tab while keeping notes in the presenter view. [Run or edit the HyperFrames deck locally](docs/pitch/README.md).
 
 <details>
 <summary>Preview the title slide</summary>
@@ -27,7 +31,7 @@ Eight slides for the EAT_HACK judges, with speaker notes for approximately two m
 
 | Purpose | Links |
 | --- | --- |
-| Explore Trace | [Quick tour](#quick-tour), [features](#features), [screenshots](#screenshots-and-demo) |
+| Explore Trace | [Pitch deck](#pitch-deck), [quick tour](#quick-tour), [features](#features), [screenshots](#screenshots-and-demo) |
 | Run it locally | [Installation](#installation), [usage](#usage), [troubleshooting](#troubleshooting) |
 | Understand the system | [Architecture](#architecture-overview), [interactive map](#interactive-trace-system), [API](#api-and-cli-reference) |
 | Review the evidence | [Tests](#tests), [roadmap and forecasting](#roadmap) |

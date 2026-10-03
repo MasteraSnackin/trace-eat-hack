@@ -1,0 +1,12 @@
+{
+  "name": "trace-eat-hack-pitch",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.114 present ./composition --port 4325 --no-open",
+    "build": "node scripts/build-composition.mjs && node scripts/build-wrapper.mjs",
+    "check": "npm run build && node scripts/check-slides.mjs",
+    "lint": "npx --yes hyperframes@0.8.114 lint ./composition",
+    "serve": "python3 -m http.server 4326 --bind 127.0.0.1"
+  }
+}

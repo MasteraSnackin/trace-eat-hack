@@ -8,15 +8,17 @@ Trace estimates gaze towards three broad shelf zones and records continuous visi
 
 The operator enters the camera and shelf measurements; shoppers do not need to complete a calibration routine. Estimated gaze does not establish preference or intent to buy. Trace does not detect product pickups, returning customers or purchases.
 
-The interface calls the app Shelf Trace. [The review plan](PLAN.md) lists the work completed for the nine supplied task briefs.
+The interface calls the app Shelf Trace. Start with [installation](#installation), see the [operator screenshot](#screenshots-and-demo), or read the [architecture guide](ARCHITECTURE.md).
 
 ## Contents
 
+- [Description](#description)
 - [Features](#features)
 - [Tech stack](#tech-stack)
 - [Architecture overview](#architecture-overview)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
 - [Configuration](#configuration)
 - [Screenshots and demo](#screenshots-and-demo)
 - [API and CLI reference](#api-and-cli-reference)
@@ -54,22 +56,26 @@ The app does not save camera images, recordings or face embeddings. A visit ID c
 flowchart LR
     Camera[Webcam] --> Operator[Operator browser]
     Operator -->|JPEG frames and controls| API[Local FastAPI service]
-    API --> Vision[OpenVINO CPU models]
-    Vision --> Geometry[Shelf geometry]
-    Geometry --> Journey[Visit and dwell state in memory]
-    Journey -->|State and example offers| Display[Customer browser]
+    Display[Customer browser] -->|GET /api/state| API
+    API -->|JSON state and example offers| Display
+    API -->|Run models and map gaze| Vision[OpenVINO CPU models + shelf geometry]
+    Vision -->|Observation| API
+    API -->|Update or read| Journey[Visit and dwell state in memory]
+    Journey -->|Snapshot| API
     API -->|Estimates and state| Operator
     Storage[Official model storage] -. Setup download only .-> Files[Local model files]
     Files --> Vision
 ```
 
-The browser sends frames to a service on the same computer. The service estimates gaze, maps it onto the configured shelf and updates the temporary state that the customer view polls. Models are downloaded during setup. The app has no external inference service or database.
+Both browser views communicate with the API on the same computer. The API runs the models, maps gaze onto the shelf and updates visit state. The customer view polls the API for a JSON snapshot; it does not receive camera frames or read Python state directly. Models are downloaded during setup. The app has no external inference service or database.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and reliability limits.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and reliability limits. The [interactive system map](docs/diagrams/trace-system.html) includes source links and guided views. GitHub displays its HTML source; download the file and open it in a browser to use the viewer. Its [editable diagram data](docs/diagrams/trace-system.architecture.json) is included.
+
+A [screenshot of the map](docs/diagrams/trace-system-light.jpg) is available without opening the viewer.
 
 ## Installation
 
-You need Python 3.12, `curl` and a webcam. The commands below use a macOS or Linux shell. Runtime checks used an Apple M4 Max running macOS; Linux and Windows have not been validated. You only need Node.js 22 or later to run the JavaScript tests.
+You need Git, Python 3.12, `curl` and a webcam. The commands below use a macOS or Linux shell. Runtime checks used an Apple M4 Max running macOS; Linux and Windows have not been validated. You only need Node.js 22 or later to run the JavaScript tests.
 
 ```sh
 git clone https://github.com/MasteraSnackin/trace-eat-hack.git
@@ -84,22 +90,26 @@ The downloader retrieves about 18.7 MB of model data from Intel's storage over v
 
 Model weights, virtual environments and caches are excluded from Git. Do not copy them into a commit.
 
+Leave the terminal running. Open the [operator view](http://127.0.0.1:4321) and look for "Gaze service ready". The camera stays off until you start it. If the service cannot load its models, follow [model recovery](#troubleshooting).
+
 ## Usage
 
-Open the [operator view](http://127.0.0.1:4321), check the shelf settings, then choose **Start camera** and grant the browser's camera permission. Open the [customer display](http://127.0.0.1:4321/display) in a separate window or on another monitor.
+Open the [operator view](http://127.0.0.1:4321), set up the shelf as described below and choose **Save shelf setup**. Then choose **Start camera** and grant the browser's camera permission. Open the [customer display](http://127.0.0.1:4321/display) in a separate window or on another monitor.
 
-Use one active operator window and keep it visible for reliable frame timing. Browsers can throttle background tabs. Leaving or closing the page stops capture, and returning to it does not restart the camera.
+Use one active operator window and keep it visible for reliable frame timing. Browsers can throttle background tabs. Navigating away from or closing the page stops capture, and returning to it does not restart the camera.
 
 For a physical check:
 
 1. Mount a level webcam in the shelf plane, facing the shopper.
 2. Arrange three large, equal-width zones: bars, drinks and snacks, as seen by the shopper.
-3. Enter measured shelf dimensions and camera position, along with the approximate eye distance and camera field of view.
+3. Enter measured shelf dimensions and camera position, along with the approximate eye distance and camera field of view. Choose **Save shelf setup** to apply them; typing into the form alone does not save changes.
 4. Have one person with clearly visible eyes look towards known locations, then compare those locations with the estimated zones. This checks the installation. Shoppers do not need to repeat it.
 
 A laptop webcam can show gaze estimates, but shelf mapping requires the configured shelf to be in the camera's plane. The app does not measure depth or compensate for camera tilt or lens distortion. Glasses, lighting, occlusion, head movement and changes in distance can affect the result.
 
 **Stop** releases the browser camera. **Reset run** clears activity while retaining the current settings. Restarting the server clears both settings and activity. Stop the server with Ctrl+C.
+
+When an open operator page detects a server restart, it stops capture and asks you to review and save the setup before starting again. If the form has no unsaved edits, it loads the restarted service's settings. Unsaved edits stay in the form. Returning to a page after navigation does not restart capture automatically.
 
 If port 4321 is occupied, use a different loopback port:
 
@@ -108,6 +118,18 @@ If port 4321 is occupied, use a different loopback port:
 ```
 
 Open both views on the same chosen port. Do not bind the service to a public network interface; it has no user authentication.
+
+### Troubleshooting
+
+| What you see | What to do |
+| --- | --- |
+| The service cannot load the gaze models | Stop the server, run `.venv/bin/python scripts/download_models.py`, then start it again. The downloader reuses valid files and replaces missing or invalid ones. Models load at server startup. |
+| Camera permission denied, no camera found or camera unavailable | Allow camera access for the local page, connect a webcam, or close another app using it, according to the displayed error. Use a browser that supports camera access on localhost. |
+| Start is disabled after a restart | Review the shelf settings and choose **Save shelf setup**. Start becomes available once the service is ready and the save succeeds. |
+| The customer display says "Local connection paused" | Check that the local service is running and both views use the same port. The display retries automatically. |
+| Gaze remains unassigned | Check the physical setup and that one face has clearly visible, open eyes. Unclear views, multiple faces, estimates outside the shelf and estimates near boundaries remain unassigned. Physical accuracy still needs testing. |
+
+For API status codes and recovery details, see [error handling](docs/ERROR_HANDLING.md).
 
 ## Configuration
 
@@ -172,15 +194,24 @@ The service loads models from this repository's `models/` directory. An alternat
 
 ## Tests
 
+The locked installation above includes the Python test dependencies. Run the software tests without a webcam or downloaded model weights:
+
 ```sh
 .venv/bin/python -m pytest -q
 node --test tests/*.mjs
+```
+
+Check downloaded model files separately. This command reports an error if a file is missing or fails verification:
+
+```sh
 .venv/bin/python scripts/download_models.py --verify-only
 ```
 
 Python tests cover geometry, dwell, offer expiry, validation and concurrent request handling. The JavaScript tests cover how the client handles errors and state. Tests use synthetic fixtures, and API tests inject vision pipelines. Passing them does not establish physical webcam performance or gaze accuracy.
 
 [Model provenance](model-provenance.json) records separate checks using publisher samples. [PERFORMANCE.md](docs/PERFORMANCE.md) contains the current profiling results and commands to reproduce the benchmarks. The [audit](docs/AUDIT.md) separates automated and browser checks from physical checks that remain unverified.
+
+The [review plan](PLAN.md) maps the nine task briefs to their reports. For implementation changes, start with the [architecture guide](ARCHITECTURE.md); for a reproduced failure, use the [debugging report](docs/DEBUG.md).
 
 ## Roadmap
 

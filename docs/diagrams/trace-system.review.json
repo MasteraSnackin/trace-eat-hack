@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-03T11:37:10.907492+00:00",
+  "diagram_type": "architecture",
+  "artifact": {
+    "path": "trace-system.html",
+    "sha256": "31c062917d76a496a2f3fc71cc05aceb147e7ebd91e2d5ec29d357a5e1882fba",
+    "bytes": 814984
+  },
+  "specification": {
+    "path": "trace-system.architecture.json",
+    "sha256": "fb1147d4ba7f52cbac4c05d3d1782f67093a59e43d1672e8451ad0643b6de085",
+    "bytes": 8771
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "browser_evidence": "not_run",
+  "browser_evidence_reason": "Archify visual-check was not run. Browser interaction for this task used the approved CUA interface; the records below are separate manual browser evidence.",
+  "visual_review": "passed",
+  "visual_review_scope": "Full-map desktop layout in light and dark themes, labels and connecting lines, card fit, search, node details, source-link destinations and guided views. Screenshots were inspected after saving.",
+  "correction_rounds": 1,
+  "correction": "Shortened the title, subtitle and repeated card text to remove initial overflow at 1440 x 900. No renderer, CSS or font-size changes.",
+  "manual_browser_review": {
+    "surface": "Codex in-app browser through CUA",
+    "view": "Default complete diagram, Classic style, no active guided chapter",
+    "containment": [
+      {
+        "theme": "light",
+        "viewportWidth": 1440,
+        "viewportHeight": 900,
+        "scrollWidth": 1440,
+        "scrollHeight": 900,
+        "passed": true
+      },
+      {
+        "theme": "light",
+        "viewportWidth": 1600,
+        "viewportHeight": 1000,
+        "scrollWidth": 1600,
+        "scrollHeight": 1000,
+        "passed": true
+      },
+      {
+        "theme": "light",
+        "viewportWidth": 1920,
+        "viewportHeight": 1080,
+        "scrollWidth": 1920,
+        "scrollHeight": 1080,
+        "passed": true
+      },
+      {
+        "theme": "light",
+        "viewportWidth": 2048,
+        "viewportHeight": 1320,
+        "scrollWidth": 2048,
+        "scrollHeight": 1320,
+        "passed": true
+      },
+      {
+        "theme": "dark",
+        "viewportWidth": 1440,
+        "viewportHeight": 900,
+        "scrollWidth": 1440,
+        "scrollHeight": 900,
+        "passed": true
+      }
+    ],
+    "observations": [
+      "The full map and conclusion cards fit each measured desktop viewport without scrolling.",
+      "No clipped cards or node labels, overlapping relationship labels or conspicuous empty lower page band were seen in the saved endpoint screenshots.",
+      "Searching for Journey returned three relevant nodes; selecting Journey opened its details and two pinned events.py source links.",
+      "Closing the node details removed the panel.",
+      "Frame to offer, Customer display and Model setup opened their expected five, three and four-node paths. Show all restored the complete diagram.",
+      "No browser console errors were reported during the interaction checks."
+    ],
+    "screenshots": [
+      {
+        "path": "trace-system-light.jpg",
+        "theme": "light",
+        "width": 1440,
+        "height": 900,
+        "sha256": "f76c58cb40b540a2cffd4674fdc4d9449a6a6a30e78edf2422aa3759e3c148fa",
+        "bytes": 101350
+      },
+      {
+        "path": "trace-system-dark.jpg",
+        "theme": "dark",
+        "width": 1440,
+        "height": 900,
+        "sha256": "828c6102c3fb599244a393bd0a94c1d4227b9cb7f9b475d9ff4f33d0afb304fe",
+        "bytes": 106343
+      },
+      {
+        "path": "trace-system-light-large.jpg",
+        "theme": "light",
+        "width": 2048,
+        "height": 1320,
+        "sha256": "cda5783921ae10e1c2393bbeda1266f770208793660a839993d28a872b9084f4",
+        "bytes": 147275
+      },
+      {
+        "path": "trace-system-dark-large.jpg",
+        "theme": "dark",
+        "width": 2048,
+        "height": 1320,
+        "sha256": "528b8b58458bf0e73a0369e269a1fe085ac67b0ae5a0ee60305298a92f873687",
+        "bytes": 154079
+      }
+    ],
+    "export_check": {
+      "status": "unverified",
+      "detail": "The PNG export action was invoked, but the browser download observer timed out after 15 seconds. No exported file was captured or inspected; saved browser screenshots are separate evidence."
+    },
+    "limits": [
+      "Automated Archify browser evidence was not collected.",
+      "No mobile layout or physical webcam experiment was tested."
+    ]
+  }
+}

@@ -1,0 +1,401 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Trace: local inference and display",
+    "subtitle": "Code map \u00b7 revision cacc96fc7d41",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/MasteraSnackin/trace-eat-hack",
+      "revision": "cacc96fc7d4105e9231fe948c03ae25163d49f32",
+      "provider": "github",
+      "link_mode": "web"
+    },
+    "views": [
+      {
+        "id": "frame-path",
+        "label": "Frame to offer",
+        "focus": [
+          "camera",
+          "frame-api",
+          "vision",
+          "geometry",
+          "journey"
+        ],
+        "note": "Follow frame data through stages orchestrated by server.py. Geometry and offers are heuristic."
+      },
+      {
+        "id": "display-poll",
+        "label": "Customer display",
+        "focus": [
+          "customer",
+          "state-api",
+          "journey"
+        ],
+        "note": "The display polls /api/state every 500 ms. The route reads an expiring Journey snapshot."
+      },
+      {
+        "id": "model-setup",
+        "label": "Model setup",
+        "focus": [
+          "intel",
+          "downloader",
+          "weights",
+          "vision"
+        ],
+        "note": "Setup downloads pinned files over HTTPS, verifies their size and SHA-384, then stores them for local inference."
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      50,
+      65
+    ],
+    "cols": 5,
+    "cellW": 184,
+    "cellH": 86,
+    "gapX": 95,
+    "gapY": 136
+  },
+  "components": [
+    {
+      "id": "intel",
+      "type": "external",
+      "label": "Intel model storage",
+      "sublabel": "Setup download source",
+      "row": 0,
+      "col": 0,
+      "sources": [
+        {
+          "path": "model-provenance.json",
+          "line": 1,
+          "end_line": 96,
+          "label": "Pinned download URLs"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "downloader",
+      "type": "backend",
+      "label": "Model downloader",
+      "sublabel": "Size + SHA-384 checks",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "scripts/download_models.py",
+          "line": 20,
+          "end_line": 78,
+          "label": "Verify and install files"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "weights",
+      "type": "backend",
+      "label": "Local model files",
+      "sublabel": "models/ \u00b7 IR + ONNX",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "vision.py",
+          "line": 102,
+          "end_line": 136,
+          "label": "Load five local models"
+        },
+        {
+          "path": "scripts/download_models.py",
+          "line": 59,
+          "end_line": 78,
+          "label": "Verified atomic file replacement"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "camera",
+      "type": "frontend",
+      "label": "Camera capture",
+      "sublabel": "Operator browser",
+      "row": 1,
+      "col": 0,
+      "sources": [
+        {
+          "path": "static/app.js",
+          "line": 233,
+          "end_line": 319,
+          "label": "Capture, JPEG and frame upload"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "frame-api",
+      "type": "backend",
+      "label": "Frame API",
+      "sublabel": "POST /api/infer",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "server.py",
+          "line": 166,
+          "end_line": 266,
+          "label": "Guard and orchestrate inference"
+        },
+        {
+          "path": "api_support.py",
+          "line": 33,
+          "end_line": 104,
+          "label": "Bound uploads and decode JPEG"
+        },
+        {
+          "path": "run.sh",
+          "line": 8,
+          "label": "Local service entry point"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "vision",
+      "type": "backend",
+      "label": "Vision pipeline",
+      "sublabel": "OpenVINO \u00b7 CPU",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "vision.py",
+          "line": 94,
+          "end_line": 180,
+          "label": "Local model loading and inference"
+        },
+        {
+          "path": "vision.py",
+          "line": 182,
+          "end_line": 270,
+          "label": "Pose, landmarks, eyes and gaze"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "geometry",
+      "type": "backend",
+      "label": "Shelf geometry",
+      "sublabel": "observe(result, config)",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        {
+          "path": "geometry.py",
+          "line": 13,
+          "end_line": 77,
+          "label": "Shelf assumptions and ray mapping"
+        },
+        {
+          "path": "server.py",
+          "line": 231,
+          "end_line": 235,
+          "label": "Observation passed to Journey"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "journey",
+      "type": "backend",
+      "label": "Journey",
+      "sublabel": "Visits, dwell, demo offers",
+      "row": 1,
+      "col": 4,
+      "sources": [
+        {
+          "path": "events.py",
+          "line": 19,
+          "end_line": 69,
+          "label": "In-memory state and expiry"
+        },
+        {
+          "path": "events.py",
+          "line": 71,
+          "end_line": 129,
+          "label": "Process observations and snapshot"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "customer",
+      "type": "frontend",
+      "label": "Customer display",
+      "sublabel": "500 ms state polling",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "static/display.js",
+          "line": 7,
+          "end_line": 36,
+          "label": "Poll, render and recover"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    },
+    {
+      "id": "state-api",
+      "type": "backend",
+      "label": "State API",
+      "sublabel": "GET /api/state",
+      "row": 2,
+      "col": 4,
+      "sources": [
+        {
+          "path": "server.py",
+          "line": 148,
+          "end_line": 150,
+          "label": "Read a Journey snapshot"
+        },
+        {
+          "path": "events.py",
+          "line": 122,
+          "end_line": 129,
+          "label": "Expire stale state before returning"
+        }
+      ],
+      "size": [
+        184,
+        86
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "download",
+      "from": "intel",
+      "to": "downloader",
+      "label": "HTTPS",
+      "variant": "dashed"
+    },
+    {
+      "id": "install",
+      "from": "downloader",
+      "to": "weights",
+      "label": "verified files",
+      "variant": "dashed"
+    },
+    {
+      "id": "load",
+      "from": "weights",
+      "to": "vision",
+      "label": "load at startup",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        700,
+        219
+      ]
+    },
+    {
+      "id": "upload",
+      "from": "camera",
+      "to": "frame-api",
+      "label": "JPEG POST",
+      "variant": "emphasis"
+    },
+    {
+      "id": "infer",
+      "from": "frame-api",
+      "to": "vision",
+      "label": "BGR frame",
+      "variant": "emphasis"
+    },
+    {
+      "id": "map",
+      "from": "vision",
+      "to": "geometry",
+      "label": "gaze + eyes",
+      "variant": "emphasis"
+    },
+    {
+      "id": "observe",
+      "from": "geometry",
+      "to": "journey",
+      "label": "zone / unknown",
+      "variant": "emphasis"
+    },
+    {
+      "id": "poll",
+      "from": "customer",
+      "to": "state-api",
+      "label": "GET poll"
+    },
+    {
+      "id": "snapshot",
+      "from": "state-api",
+      "to": "journey",
+      "label": "snapshot()"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "One local service",
+      "items": [
+        "Both API routes run in server.py on 127.0.0.1:4321.",
+        "Arrows show data passed through stages called by server.py."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "What the browsers receive",
+      "items": [
+        "Operator: faces, an observation and state after each accepted frame.",
+        "Customer: state only; failed polls or an inactive camera clear the offer."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "State and limits",
+      "items": [
+        "Model files persist; frames are not saved. Configuration and Journey state stay in memory.",
+        "Shelf zones assume geometry. Gaze accuracy is unverified; visits do not identify people."
+      ]
+    }
+  ]
+}

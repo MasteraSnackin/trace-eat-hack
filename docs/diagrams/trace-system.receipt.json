@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "docs/diagrams/trace-system.architecture.json",
+  "output": "docs/diagrams/trace-system.html",
+  "specification": {
+    "sha256": "fb1147d4ba7f52cbac4c05d3d1782f67093a59e43d1672e8451ad0643b6de085",
+    "bytes": 8771
+  },
+  "artifact": {
+    "sha256": "31c062917d76a496a2f3fc71cc05aceb147e7ebd91e2d5ec29d357a5e1882fba",
+    "bytes": 814984
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/MasteraSnackin/trace-eat-hack",
+    "revision": "cacc96fc7d4105e9231fe948c03ae25163d49f32",
+    "references": 17
+  }
+}

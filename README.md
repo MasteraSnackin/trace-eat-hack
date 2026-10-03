@@ -4,9 +4,13 @@ A local webcam experiment to study how people browse a shop shelf.
 
 ## Description
 
+Sales records show what shoppers bought, but leave much of the browsing journey unrecorded. Retailers and brands may also want to know which parts of a shelf people look towards and how that changes over time. Trace explores whether local webcam gaze estimates can help fill that gap without asking shoppers survey questions.
+
 Trace estimates gaze towards three broad shelf zones and records continuous visits. When gaze stays on a zone long enough, it shows an example offer. It is an EAT_HACK Retail Futures prototype for retailers and brands exploring what happens before checkout.
 
 The operator enters the camera and shelf measurements; shoppers do not need to complete a calibration routine. Estimated gaze does not establish preference or intent to buy. Trace does not detect product pickups, returning customers or purchases.
+
+The current build is a measurement prototype. Physical gaze accuracy remains unverified, and trend forecasting is not implemented. The [forecasting plan](#path-to-trend-forecasting) explains the data and validation needed to develop it further.
 
 The interface calls the app Shelf Trace. Start with [installation](#installation), see the [operator screenshot](#screenshots-and-demo), or read the [architecture guide](ARCHITECTURE.md).
 
@@ -24,6 +28,7 @@ The interface calls the app Shelf Trace. Start with [installation](#installation
 - [API and CLI reference](#api-and-cli-reference)
 - [Tests](#tests)
 - [Roadmap](#roadmap)
+- [Path to trend forecasting](#path-to-trend-forecasting)
 - [Contributing](#contributing)
 - [Licence](#licence)
 - [Contact and support](#contact-and-support)
@@ -220,6 +225,19 @@ The [review plan](PLAN.md) maps the nine task briefs to their reports. For imple
 - Investigate pickup and return detection as a separate observation signal.
 
 These are future work. Product recognition, returning-customer identification, demographic inference, purchases and redeemable promotions are not implemented.
+
+### Path to trend forecasting
+
+The proposed first forecast is next week's share of estimated gaze time towards each shelf zone. Forecasting sales would require retailer purchase data as well. Neither forecast is part of the current build.
+
+1. Validate the physical measurements, then save timestamped daily aggregates across comparable periods. The app currently loses its activity history on restart. Track valid and unassigned observations so changing camera visibility is not mistaken for changing interest.
+2. Record which products or categories occupy each zone, with dated changes to layout, prices, stock availability and promotions. This would begin with an operator-maintained shelf map; the current camera pipeline does not recognise products. Log the display's own offers because they could affect the behaviour being measured.
+3. Compare shelf measurements with relevant UK search-interest data and, when available, retailer sales. [Google Trends](https://support.google.com/trends/answer/4365533?hl=en) reports relative search interest, not purchase volumes. No search or sales integration is currently connected.
+4. Train on earlier periods and test predictions against later periods that the model has not seen. Compare with a simple forecast such as last week's value, report errors and uncertainty, and retain additional signals only if they improve those results. [Time-series cross-validation](https://otexts.com/fpp3/tscv.html) explains this evaluation approach.
+
+For example, a rising share of estimated gaze time towards a zone containing protein snacks, alongside rising search interest, could prompt a retailer to investigate that category. This is a hypothetical use case, not a finding from Trace. Longer dwell could also reflect confusion, a promotion or a changed shelf position. A useful sales forecast would need evidence that earlier gaze measurements improve predictions of later purchases.
+
+UK-wide trend claims would require evidence from a wider, representative set of shops. The immediate aim is to test whether reliable local shelf measurements add useful information to a forecast.
 
 ## Contributing
 

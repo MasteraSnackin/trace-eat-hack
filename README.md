@@ -1,46 +1,60 @@
 # Shelf Trace
 
-A local webcam experiment to study how people browse a shop shelf.
+A till tells you what sold. It doesn’t tell you what happened before that decision.
+
+[Demo](#quick-tour) · [Pitch deck](#pitch-deck) · [Run locally](#installation) · [Features](#features) · [System map](#interactive-trace-system) · [Roadmap](#roadmap)
+
+<details>
+<summary>Full guide and technical reference</summary>
+
+- Explore: [pitch deck](#pitch-deck), [quick tour](#quick-tour), [features](#features), [screenshots](#screenshots-and-demo).
+- Run: [installation](#installation), [usage](#usage), [configuration](#configuration), [troubleshooting](#troubleshooting).
+- Understand: [architecture](#architecture-overview), [interactive map](#interactive-trace-system), [API](#api-and-cli-reference).
+- Review: [tests](#tests), [roadmap and forecasting](#roadmap).
+- Contribute: [guidance](#contributing), [licence](#licence), [support](#contact-and-support).
+
+</details>
 
 ## Description
 
-The description below covers the newer local Shelf Trace prototype for **EAT_HACK Retail Futures**. That implementation has not yet been added to this repository. The run instructions, feature reference, screenshots, system map and pitch deck here describe the earlier gaze-and-offer build available in this checkout.
-
-A till tells you what sold. It doesn’t tell you what happened before that decision.
-
-What caught someone’s attention? What did they pick up, consider, then put back? And could the right offer have helped them choose?
-
-That’s the problem behind **Shelf Trace**.
+Shelf Trace is an **EAT_HACK Retail Futures prototype** that explores the shopping journey before checkout using one webcam and a nearby customer screen. What caught someone’s attention? What did they pick up, consider, then put back? Could a relevant offer have helped them choose?
 
 Online retailers can study clicks and abandoned baskets. In a physical shop, much of that journey is missing. Asking shoppers questions interrupts the experience and doesn’t always reveal what actually happened.
 
-Shelf Trace is a prototype that explores that missing journey using one webcam and a nearby customer screen.
+The newer local prototype brings together three functions:
 
-It brings together three functions.
+| Function | What it does |
+| --- | --- |
+| Estimate shelf gaze | Estimates the broad shelf area someone looks towards and measures how long valid observations continue. |
+| Capture shopping signals | Detects visible hands and watches marked product positions to infer pickups and put-backs. |
+| Show a relevant offer | Uses observed viewing time, time of day and retailer-entered stock to calculate an example discount. Longer browsing or higher stock can increase it, within a retailer-set limit. Each offer explains its rules. |
 
-First, **track attention**. The camera estimates which broad shelf area someone looks towards and measures how long valid observations continue.
+Personalisation uses anonymous browsing behaviour, without identifying faces or guessing demographics. The operator can review observations and export a report. The aim is to offer something relevant before the shopper walks away.
 
-Second, **capture signals of shopping intention**. The camera detects visible hands and watches marked product positions to infer when an item is picked up and replaced.
+These observations are signals of possible interest, not proof of attention, preference, purchase intent or why someone put an item back. Physical shelf accuracy remains unverified. Discounts cannot be redeemed, and the prototype does not record purchases. Real shelf testing comes next, followed by exploring whether reliable pickup and put-back signals could inform offers.
 
-Those actions help reveal the difference between passing a shelf and considering a product. They are signals of possible interest, not proof of what someone thinks or why they put something back.
+### Project status
 
-Third, **respond with a custom discount**. The current rules use observed viewing time, the time of day and stock quantities entered by the retailer. Someone browsing longer could see an additional discount. Higher stock could justify a stronger offer, within a retailer-set limit.
+| Build | Availability and scope |
+| --- | --- |
+| Published repository | Gaze estimates across three zones, temporary visits, dwell time and fixed example offers. The instructions, feature reference, screenshots, system map and pitch deck below cover this build. |
+| Newer local prototype | Also includes hand detection, inferred pickups and put-backs, configurable discount rules and report export. This implementation has not yet been added to the repository. |
 
-Every offer explains its rules. Personalisation uses anonymous browsing behaviour, without identifying faces or guessing demographics. Discounts are examples only; the prototype does not redeem offers or record purchases.
+Trend forecasting is [proposed work](#path-to-trend-forecasting).
 
-The operator can review shelf observations and export a report. Next comes real shelf testing, followed by exploring how reliable pickup and put-back signals could inform offers.
+## Quick tour
 
-**Shelf Trace turns overlooked shelf activity into useful signals and creates an opportunity to offer something relevant before the shopper walks away.**
+This 20-second loop shows the published build's dashboard, a rejected camera height, a corrected setup save and the idle customer display. The real browser captures are held briefly for readability, with the camera off throughout.
 
-Physical shelf accuracy remains unverified. Estimated gaze and inferred product events do not establish attention, preference or purchase intent. Trend forecasting remains future work.
+![Animated Trace walkthrough showing the dashboard, setup validation, a successful save and the idle customer display](docs/videos/trace-ui-walkthrough.gif)
+
+[Watch or download the MP4](docs/videos/trace-ui-walkthrough.mp4) for playback controls, or browse the [screenshots and explanations](#screenshots-and-demo).
 
 ## Pitch deck
 
-[Open the animated HyperFrames presentation](https://masterasnackin.github.io/trace-eat-hack/pitch/)
+[Open the animated presentation](https://masterasnackin.github.io/trace-eat-hack/pitch/) · [Download the editable PowerPoint](docs/slides/Trace-EAT-HACK-judges-pitch.pptx)
 
-[Download the editable PowerPoint](docs/slides/Trace-EAT-HACK-judges-pitch.pptx)
-
-Eight slides for the EAT_HACK judges, with speaker notes for approximately two minutes. The deck covers the problem, working prototype, local processing, validation and proposed forecasting, and links to the public demos and repository.
+Eight slides for the EAT_HACK judges, with about two minutes of speaker notes. The deck covers the published build, its retail problem, local processing, validation and proposed forecasting, with links to the public demos and repository.
 
 The browser presentation adds animated entrances and staged reveals. Use the arrow keys or Next to advance. Click **Present**, or press **P**, to open an audience tab while keeping notes in the presenter view. [Run or edit the HyperFrames deck locally](docs/pitch/README.md).
 
@@ -51,27 +65,12 @@ The browser presentation adds animated entrances and staged reveals. Use the arr
 
 </details>
 
-## Contents
-
-| Purpose | Links |
-| --- | --- |
-| Explore Trace | [Pitch deck](#pitch-deck), [quick tour](#quick-tour), [features](#features), [screenshots](#screenshots-and-demo) |
-| Run it locally | [Installation](#installation), [usage](#usage), [troubleshooting](#troubleshooting) |
-| Understand the system | [Architecture](#architecture-overview), [interactive map](#interactive-trace-system), [API](#api-and-cli-reference) |
-| Review the evidence | [Tests](#tests), [roadmap and forecasting](#roadmap) |
-| Contribute | [Guidance](#contributing), [licence](#licence), [support](#contact-and-support) |
-
-## Quick tour
-
-This 20-second loop shows the dashboard, a rejected camera height, a corrected setup save and the idle customer display. It uses real browser captures held briefly for readability, with the camera off throughout.
-
-![Animated Trace walkthrough showing the dashboard, setup validation, a successful save and the idle customer display](docs/videos/trace-ui-walkthrough.gif)
-
-[Watch or download the MP4](docs/videos/trace-ui-walkthrough.mp4) for playback controls, or browse the [screenshots and explanations](#screenshots-and-demo).
-
 ## Features
 
-These features describe the earlier build included in this repository. The operator uses the main page. The customer screen is at `/display`.
+The published build estimates gaze towards left, centre and right shelf zones, groups observations into temporary visits and shows an example offer after sustained gaze. The operator uses the main page; the customer screen is at `/display`.
+
+<details>
+<summary>Detailed behaviour and controls</summary>
 
 | Function | Current behaviour |
 | --- | --- |
@@ -86,9 +85,9 @@ These features describe the earlier build included in this repository. The opera
 | Controls and recovery | Supports Stop, Reset and recovery from model, camera and connection errors. A service restart requires a successful setup save before capture can restart. |
 | Local API | Exposes readiness, settings, visits, dwell, offers and events, and accepts frames and control requests. See the [route reference](#api-and-cli-reference). |
 
-### Current limits
+</details>
 
-These limits apply to the code in this checkout.
+### Current limits
 
 - One active operator and one camera, with one clear face needed for zone attribution. Temporary visits can split or merge observations, so their total is not a count of unique shoppers.
 - Protein categories and offers are fixed examples. There is no product recognition, pickup or purchase detection, returning-customer identification, demographic inference or redeemable discount.
@@ -181,7 +180,7 @@ Changing the setup ends the current visit and clears its dwell time. The accumul
 
 ## Screenshots and demo
 
-These real interface captures were taken on 3 October 2026 with the camera off. They show controls and setup feedback, with no recorded shopper observations. Open a view below for its screenshot.
+These captures show the published build on 3 October 2026, with the camera off and no recorded shopper observations. Expand a view for its screenshot and explanation.
 
 <details>
 <summary>Full desktop operator view</summary>
@@ -192,23 +191,19 @@ The gaze service is ready, with an empty camera preview and zero totals. The ful
 
 </details>
 
-### Camera controls
+<details>
+<summary>Camera controls</summary>
 
 Start and Stop manage the webcam. During capture, this panel shows face boxes, gaze direction and inference measurements. The ready state below has an empty preview.
-
-<details>
-<summary>Show camera controls</summary>
 
 ![Camera controls in the ready state, with the camera off and no inference measurements](docs/screenshots/readme-camera-controls-2026-10-03.jpg)
 
 </details>
 
-### Reading the shelf figures
+<details>
+<summary>Shelf estimates and what the figures mean</summary>
 
 The cards show fixed left, centre and right zones. Protein labels are demonstration categories, not recognised products.
-
-<details>
-<summary>Show shelf estimates and explain the figures</summary>
 
 | Figure | Meaning |
 | --- | --- |
@@ -224,12 +219,10 @@ All values are idle in this capture; no zone offer was triggered.
 
 </details>
 
-### Shelf setup and activity
+<details>
+<summary>Shelf setup and activity</summary>
 
 Saving applies the equipment measurements and adds a **Setup changed** event. The activity list shows recent events first. Saving settings does not validate gaze accuracy.
-
-<details>
-<summary>Show saved setup and activity</summary>
 
 This capture contains only a real setup-change event, with no shopper observation.
 
@@ -237,29 +230,25 @@ This capture contains only a real setup-change event, with no shopper observatio
 
 </details>
 
-### When measurements do not fit
+<details>
+<summary>Setup validation</summary>
 
 A camera height of 2 m cannot fit within a 0.6 m shelf. Saving shows **Could not save: Camera height must be within the shelf height.** The previous valid setup remains active. The corrected example uses 0.3 m.
-
-<details>
-<summary>Show the validation message</summary>
 
 ![Setup validation rejecting a camera height of 2 metres for a shelf height of 0.6 metres](docs/screenshots/readme-setup-validation-2026-10-03.jpg)
 
 </details>
 
-### Customer display
+<details>
+<summary>Customer display</summary>
 
 The idle screen says **Find your next favourite.** Sustained estimated gaze can replace it with an example offer. Unclear or stale observations clear the offer; a failed state request shows **Local connection paused**. Offers cannot be redeemed.
-
-<details>
-<summary>Show the customer display</summary>
 
 ![Customer display showing its idle message and Ready for the next visit status](docs/screenshots/readme-customer-idle-2026-10-03.jpg)
 
 </details>
 
-The [audit](docs/AUDIT.md) includes more recovery screenshots and short [before](docs/videos/before-setup-validation.mp4) and [after](docs/videos/after-setup-validation.mp4) validation recordings. The EAT_HACK working-product submission video has not been added. The webcam app runs locally; the public page below hosts its architecture map.
+The [audit](docs/AUDIT.md) includes recovery screenshots and short [before](docs/videos/before-setup-validation.mp4) and [after](docs/videos/after-setup-validation.mp4) validation recordings. The EAT_HACK working-product submission video has not been added. The webcam app runs locally; GitHub Pages hosts the system map and animated pitch.
 
 ## Tech stack
 
@@ -316,7 +305,7 @@ Select a component for its source links, or **Show all** for the full map. Searc
 
 Still previews: [light](docs/diagrams/trace-system-light.jpg) and [dark](docs/diagrams/trace-system-dark.jpg). Files: [GIF](docs/diagrams/trace-system-walkthrough.gif) and [editable map data](docs/diagrams/trace-system.architecture.json).
 
-GitHub's [Markdown rendering rules](https://github.com/github/markup#github-markup) prevent the interactive viewer from running inside the README. GitHub Pages serves only the map. Changes to the HTML on `main` publish through the [deployment workflow](.github/workflows/deploy-map.yml).
+GitHub's [Markdown rendering rules](https://github.com/github/markup#github-markup) prevent the interactive viewer from running inside the README. GitHub Pages hosts the map and animated pitch. Changes to their files on `main` publish through the [deployment workflow](.github/workflows/deploy-map.yml).
 
 </details>
 
@@ -386,9 +375,9 @@ Python tests cover geometry, dwell, expiry, validation and concurrent requests. 
 
 - Validate gaze mapping against known shelf targets across distance, lighting and occlusion.
 - Evaluate depth-aware mapping and uncertainty before narrowing zones to individual products.
-- Investigate pickup and return detection as a separate signal.
+- Test the newer local prototype's pickup and put-back signals on a real shelf, then evaluate whether they can inform offers.
 
-These are future work. The current build's boundaries are listed under [current limits](#current-limits).
+These checks remain outstanding. The published build's boundaries are listed under [current limits](#current-limits).
 
 ### Path to trend forecasting
 

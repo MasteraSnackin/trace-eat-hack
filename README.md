@@ -132,7 +132,9 @@ Changing the setup ends the current visit and clears its dwell time. The accumul
 
 [The audit report](docs/AUDIT.md) includes screenshots of the tested flows and recovery states. They document the interface; they do not validate a shopping experiment.
 
-![Trace operator view](docs/screenshots/06-after-operator.jpg)
+Operator view, captured on 3 October 2026 with the camera off and no observations recorded.
+
+![Trace operator view with the camera off, shelf zones and setup controls](docs/screenshots/readme-operator-2026-10-03.jpg)
 
 The audit's short [before](docs/videos/before-setup-validation.mp4) and [after](docs/videos/after-setup-validation.mp4) browser recordings show setup validation without using the camera. These debugging clips are separate from the EAT_HACK working-product submission video, which has not been added. A hosted live demo has not been added; the app runs on your computer.
 

@@ -157,11 +157,68 @@ Changing the setup ends the current visit and clears its dwell time. The accumul
 
 ## Screenshots and demo
 
-[The audit report](docs/AUDIT.md) includes screenshots of the tested flows and recovery states. They document the interface; they do not validate a shopping experiment.
+This walkthrough shows the operator controls, shelf estimates, setup feedback and separate customer screen. The captures were taken on 3 October 2026. The detailed views use a separate local session with the camera off; the only recorded activity is a saved setup. They explain the interface and do not demonstrate physical gaze accuracy or a forecast.
 
-Desktop operator view, captured on 3 October 2026 at 1,440 pixels wide. The gaze service is ready, with the camera off and no observations recorded.
+Jump to [camera controls](#camera-controls), [shelf figures](#reading-the-shelf-figures), [setup and activity](#shelf-setup-and-activity), [validation](#when-measurements-do-not-fit) or the [customer display](#customer-display).
+
+<details>
+<summary>Full desktop operator view</summary>
+
+The full view is 1,440 pixels wide. The gaze service is ready, with the camera off and no observations recorded in this overview capture.
 
 ![Trace desktop operator view with the camera off, shelf zones, example offer, setup controls and empty visit activity](docs/screenshots/readme-operator-desktop-2026-10-03.jpg)
+
+</details>
+
+### Camera controls
+
+**Start camera** requests browser permission and begins local frame processing. During a run, this panel shows an unmirrored preview, estimated gaze direction, visible face count and inference time. **Stop** releases the camera and ends the current visit while retaining the run totals and activity log.
+
+This capture shows the ready state, so the preview and measurements are empty. Face detection confidence describes the face detector; it is not a gaze-accuracy score. Unclear observations remain unassigned.
+
+![Camera controls in the ready state, with the camera off and no inference measurements](docs/screenshots/readme-camera-controls-2026-10-03.jpg)
+
+### Reading the shelf figures
+
+The three cards represent fixed left, centre and right zones. The protein labels are demonstration categories, not products recognised by the camera.
+
+| Figure | What it means |
+| --- | --- |
+| Seconds beneath each category | Accumulated estimated gaze time towards that zone during this run |
+| Continuous gaze estimate | The current uninterrupted period of estimated gaze towards one zone |
+| Current visit | A temporary visual track; it does not identify a person |
+| Visits this run | The number of temporary visits, not a count of unique or returning customers |
+| Customer display preview | The current general message or example offer supplied by the service |
+
+During capture, sustained estimated gaze can trigger a zone-specific example offer after the configured dwell threshold. The zero values below are the idle state; no offer was triggered for this screenshot.
+
+![Three shelf zones with zero gaze totals, no active visit and a general example-offer preview](docs/screenshots/readme-shelf-gaze-2026-10-03.jpg)
+
+### Shelf setup and activity
+
+The operator enters the shelf dimensions, camera position, approximate eye distance and field of view, then chooses **Save shelf setup**. These values describe the equipment. Saving them does not validate gaze accuracy, and shoppers do not complete a calibration routine.
+
+The activity panel lists recent events, newest first. This capture shows the real **Setup changed** event created by saving the form. It contains no shopper observation. During a run, the log can also show visit starts, qualifying zone dwell and displayed offers.
+
+**Reset run** clears activity, visits and accumulated totals while keeping the shelf settings. If capture is running, it continues after the reset; use **Stop** to release the camera.
+
+![Saved shelf measurements beside an activity log containing only a setup-change event](docs/screenshots/readme-setup-activity-2026-10-03.jpg)
+
+### When measurements do not fit
+
+Here the shelf is 0.6 m high, but the camera height was entered as 2 m from its bottom edge. Saving produces **Could not save: Camera height must be within the shelf height.** The previous saved configuration remains in use. Correct the value and save again; the valid setup above uses a camera height of 0.3 m.
+
+![Setup validation rejecting a camera height of 2 metres for a shelf height of 0.6 metres](docs/screenshots/readme-setup-validation-2026-10-03.jpg)
+
+### Customer display
+
+Open `/display` in another window or on a monitor attached to the same computer. It receives state from the local service without requesting its own camera access.
+
+This screenshot shows the idle message, **Find your next favourite.**, with **Ready for the next visit** in the footer. During capture, a qualifying gaze estimate can change the message to a zone-specific example offer. Unclear or stale observations return it to a general message. If a state request fails, it shows **Local connection paused** and clears the previous offer. Every offer is a demonstration and cannot be redeemed.
+
+![Customer display showing its idle message and Ready for the next visit status](docs/screenshots/readme-customer-idle-2026-10-03.jpg)
+
+[The audit report](docs/AUDIT.md) contains additional screenshots of tested flows and recovery states.
 
 The audit's short [before](docs/videos/before-setup-validation.mp4) and [after](docs/videos/after-setup-validation.mp4) browser recordings show setup validation without using the camera. These debugging clips are separate from the EAT_HACK working-product submission video, which has not been added. A hosted live demo has not been added; the app runs on your computer.
 

@@ -159,6 +159,12 @@ Changing the setup ends the current visit and clears its dwell time. The accumul
 
 This walkthrough shows the operator controls, shelf estimates, setup feedback and separate customer screen. The captures were taken on 3 October 2026. The detailed views use a separate local session with the camera off; the only recorded activity is a saved setup. They explain the interface and do not demonstrate physical gaze accuracy or a forecast.
 
+The 20-second loop below follows the operator dashboard, an invalid camera height, the corrected setup being saved and the idle customer display. It uses real browser captures, with each state held briefly for readability. The camera stays off throughout.
+
+![Animated Trace walkthrough showing the dashboard, setup validation, a successful save and the idle customer display](docs/videos/trace-ui-walkthrough.gif)
+
+[Watch or download the MP4](docs/videos/trace-ui-walkthrough.mp4) for playback controls. The still images below explain each part of the interface.
+
 Jump to [camera controls](#camera-controls), [shelf figures](#reading-the-shelf-figures), [setup and activity](#shelf-setup-and-activity), [validation](#when-measurements-do-not-fit) or the [customer display](#customer-display).
 
 <details>

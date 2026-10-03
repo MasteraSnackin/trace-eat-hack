@@ -97,28 +97,26 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and rel
 
 Explore how a camera frame becomes a shelf-zone estimate, how the customer display receives updates and how model files are installed.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/trace-system-dark.jpg">
-  <img src="docs/diagrams/trace-system-light.jpg" alt="Trace system map showing model setup, camera processing, shelf geometry, visit state and customer display updates">
-</picture>
+[![Animated tour of the Trace system map, ending with State API and its snapshot connection to Journey](docs/diagrams/trace-system-walkthrough.gif)](https://masterasnackin.github.io/trace-eat-hack/#focus=state-api&reach=downstream)
 
-The preview follows your browser's light or dark colour preference. Open the interactive viewer to search for components, inspect source links and select one of the guided views listed below:
+This 23-second loop follows model setup, camera processing and customer display polling, then shows how the State API reads temporary visit state. It uses real browser captures, held briefly for readability. The arrows describe the code structure; they do not show live camera activity or measured traffic.
 
-1. [Get the interactive HTML](docs/diagrams/trace-system.html) and choose **Download raw file** on GitHub.
-2. Open the saved `trace-system.html` in your browser. If you have cloned the repository, open `docs/diagrams/trace-system.html` directly.
-3. Select **Frame to offer**, **Customer display** or **Model setup**. Select a component for its explanation and source links.
+[Open the interactive map at State API](https://masterasnackin.github.io/trace-eat-hack/#focus=state-api&reach=downstream) · [Pause or scrub the MP4](docs/videos/trace-system-walkthrough.mp4) · [Open the GIF](docs/diagrams/trace-system-walkthrough.gif)
 
-The viewer works locally without starting the webcam app.
+The public viewer needs no sign-in or running webcam app. Select a component to read its explanation and source links, or choose a guided view:
 
-| Guided view | What it explains |
+| View | What it explains |
 | --- | --- |
-| Frame to offer | Follows camera data through the frame API, vision pipeline, shelf geometry and temporary visit state. |
-| Customer display | Shows how the customer page polls the state API and receives the current message or example offer. |
-| Model setup | Follows the download, size and checksum checks, local model files and model loading for inference. |
+| [Frame to offer](https://masterasnackin.github.io/trace-eat-hack/#view=frame-path) | Follows camera data through the frame API, vision pipeline, shelf geometry and temporary visit state. |
+| [Customer display](https://masterasnackin.github.io/trace-eat-hack/#view=display-poll) | Shows how the customer page polls the state API and receives the current message or example offer. |
+| [Model setup](https://masterasnackin.github.io/trace-eat-hack/#view=model-setup) | Follows the download, size and checksum checks, local model files and model loading for inference. |
+| [State API downstream](https://masterasnackin.github.io/trace-eat-hack/#focus=state-api&reach=downstream) | Highlights the API's `snapshot()` call to Journey, which holds temporary visit state. The customer display's `GET` poll is an incoming connection. |
 
-Select **Show all** to return to the complete map. The viewer also has zoom, pan and light/dark themes. Source links open the code at revision `cacc96fc7d41` and require internet access. This is a map of the implementation; it does not show live camera activity or validate gaze accuracy.
+Select **Show all** to return to the complete map. The viewer also has search, zoom, pan and light/dark themes. Source links open the code at revision `cacc96fc7d41` and require internet access. This map describes the implementation; it does not validate gaze accuracy.
 
-GitHub supports the Mermaid overview above but removes custom scripts from rendered Markdown, so this HTML viewer cannot run inside the README itself. See [GitHub's rendering rules](https://github.com/github/markup#github-markup). The [editable diagram data](docs/diagrams/trace-system.architecture.json) is included for future updates.
+To use the viewer offline, [get the interactive HTML](docs/diagrams/trace-system.html), choose **Download raw file** on GitHub and open the saved file in your browser. If you have cloned the repository, open `docs/diagrams/trace-system.html` directly. Still previews are available in [light](docs/diagrams/trace-system-light.jpg) and [dark](docs/diagrams/trace-system-dark.jpg) themes.
+
+GitHub supports the Mermaid overview above but removes custom scripts from rendered Markdown, so the README links to the interactive viewer on GitHub Pages. See [GitHub's rendering rules](https://github.com/github/markup#github-markup). Pages serves only the system map; the webcam app and API still run locally. The [editable diagram data](docs/diagrams/trace-system.architecture.json) is included for future updates. Changes to the viewer HTML on `main` publish through the [map deployment workflow](.github/workflows/deploy-map.yml).
 
 ## Installation
 

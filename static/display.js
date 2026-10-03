@@ -8,10 +8,9 @@ async function updateDisplay() {
   if (busy) return;
   busy = true;
   try {
-    const response = await fetch('/api/state', { cache: 'no-store' });
-    if (!response.ok) throw new Error('Unavailable');
-    const result = await response.json();
+    const result = await TraceClient.requestJSON('/api/state', { timeoutMs: 2000 });
     const state = result.state || result;
+    if (typeof state.camera_active !== 'boolean' || !state.offer || typeof state.offer !== 'object') throw new Error('Invalid shelf state');
     const offer = state.offer;
     const signature = JSON.stringify([offer, state.camera_active]);
     if (signature !== lastSignature) {

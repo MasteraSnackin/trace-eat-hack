@@ -1,0 +1,58 @@
+# Algorithm research and decisions
+
+Reviewed on 3 October 2026 against the local source and primary documentation and papers linked below. This is a focused comparison for a local, single-camera prototype. It is not an exhaustive survey or a claim that the selected models are the current state of the art. Published benchmark results describe their authors' datasets and do not establish performance on this shelf.
+
+The source review covers `vision.py`, `geometry.py`, `events.py`, `server.py`, browser capture/display code, configuration, model provenance and tests. The application uses NumPy arrays for model tensors, bounded face lists and dictionaries for frame results, a Pydantic model for equipment settings and a deque limited to 80 events. It has no identity embeddings, database or stored video.
+
+## Assessment of the current approach
+
+| Component | Current method | Assessment for this prototype |
+| --- | --- | --- |
+| Face and eye inference | Five pinned Open Model Zoo networks; BGR/NCHW preprocessing; adjusted square face crops; head pose, 35 landmarks, two eye-state calls and a gaze vector. At most four detector candidates are processed. | A small, inspectable local baseline with reproducible inputs. Face quality thresholds are application heuristics. A detection probability is not a probability that a shelf zone is correct. |
+| Gaze orientation | Normalise the three-vector; remove roll from eye crops and then undo the 2D rotation; convert z to the API's towards-camera sign. | Consistent with the chosen upstream adaptation. The publisher-image run confirms execution and accepted output, not a metric world ray. |
+| Shelf intersection | Infer focal length from horizontal field of view, back-project average eye pixel at one assumed depth, intersect a ray with a vertical plane, then classify equal-width thirds. | Constant work per frame and suitable as an explicitly approximate demonstration. Camera tilt, lens distortion, varying depth and learned gaze bias are unresolved. |
+| Rejection and stability | Reject missing, multiple, small, clipped, closed-eye, extreme-pose, outside-shelf and boundary observations. Require continuous same-zone dwell. No temporal filter. | Abstention is appropriate for uncertain input. Dwell suppresses short zone changes but cannot remove systematic gaze bias or prove fixation. |
+| Temporary visit grouping | One previous box, a centre-jump threshold of 0.8 times its largest dimension and a 2.5-second visibility grace period. | Constant memory and limited attribution claims. It can merge people who replace one another at a similar location and split one person who moves quickly. It does not recognise individuals. |
+| Runtime and state | Synchronous reusable infer requests under a lock, CPU latency hint, bounded event history, dictionary totals and monotonic dwell intervals. | Suitable for one local stream. Correct state expiry and cancellation matter more than a complex tracker or inference scheduler at the measured load. |
+
+The Open Model Zoo gaze model consumes two 60 by 60 eye crops and three head angles, and outputs a non-unit 3D vector. Its documentation reports 6.95 degrees mean angular error on two held-out people from an internal 60-person dataset. That restricted evaluation is not a retail acceptance result. For scale only, a 6.95-degree angular offset at one metre projects to approximately `tan(6.95°) × 1 m = 0.122 m` near the centre. This calculation is not a confidence interval and should not be used to tune the 5 cm boundary margin. [Open Model Zoo gaze model](https://docs.openvino.ai/2023.3/omz_models_model_gaze_estimation_adas_0002.html)
+
+The roll alignment and vector normalisation follow the pinned [upstream gaze estimator](https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/gaze_estimator.cpp). Eye-state class order follows the [upstream eye-state implementation](https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/eye_state_estimator.cpp), which compares output index 1 against index 0. The local provenance file records the earlier example-image checks used to resolve conflicting model README labels. Those historical image checks were not repeated in this review.
+
+## Quick wins
+
+| Proposal | Rationale and scope | Evidence or acceptance | Status |
+| --- | --- | --- | --- |
+| Expire zone offers with stale dwell | One application state invariant should determine whether a zone estimate can still support an offer. The baseline used different timeouts for dwell and offer visibility. Call `general()` at the existing 1.5-second sample expiry; preserve the longer visit grace period. | 1,000 stale offers before, zero after in the identical threshold sweep. Tests cover each zone, exact timeout semantics, preserved totals/history and resumed dwell. | Implemented first, after the written rationale in [PERFORMANCE.md](PERFORMANCE.md). |
+| Retain a reproducible stage benchmark | Model work, geometry and state code have very different costs. Optimising dictionary lookups or adding concurrency without measurements would target the wrong work. | `scripts/benchmark_pipeline.py` reports repeated timings, model-call counts and finite output checks; no camera or automatic downloads. | Implemented as measurement support. |
+| Protect model conventions when weights change | Input layout, head-output aliases, class order and gaze axes are more consequential than small arithmetic changes. Existing hashes prevent silently replacing model bytes. | A future model upgrade should rerun the pinned examples and verify vector norm, axes and open/closed classification before the upgrade is accepted. | Existing provenance retained; a reusable multi-fixture upgrade suite is deferred. |
+
+The chosen quick win repairs a demonstrated state error with no extra dependencies or new assumptions about people. The native model profile showed a roughly 7 ms median on one publisher image, so there was no measured reason to change inference scheduling in this pass.
+
+## Medium efforts
+
+| Candidate | Evidence and proposed experiment | Acceptance and limits |
+| --- | --- | --- |
+| Calibrate equipment geometry | OpenCV models camera intrinsics, distortion and the rotation/translation between camera and scene. Replace guessed FOV and the level-camera assumption with measured equipment parameters, then retain the existing abstention policy. [OpenCV calibration](https://docs.opencv.org/4.13.0/d9/d0c/group__calib3d.html) | Use known shelf targets at several distances and lateral positions. Compare zone confusion and abstention before/after. Installation calibration does not correct person-specific gaze bias or automatically measure eye depth. |
+| Test adaptive smoothing on valid observations | The 1 Euro filter changes its cutoff with signal speed to trade stationary jitter against motion lag. Compare it with the raw estimate on time-stamped trajectories; reset at gaps, unknown observations and visit changes. [Authors' filter description](https://gery.casiez.net/1euro/) | Measure zone switches while looking at a fixed target and delay after deliberate changes. Also measure false dwell and abstention rate. A filter must not carry a valid-looking value through missing evidence. Roughly 3 Hz sampling does not resolve rapid eye movements, and smoothing adds lag. No filter is installed. |
+| Improve temporary spatial association | SORT combines a motion model and assignment between detections. A limited box-overlap/velocity experiment could reduce unnecessary visit splits without appearance embeddings. [SORT paper](https://arxiv.org/abs/1602.00763) | Use labelled entry, exit, abrupt movement and replacement sequences; count merges and splits. Keep a short track lifetime and suspend attribution for multiple faces. A motion tracker does not establish identity or returning-customer status. Multi-object assignment is unnecessary while the app intentionally abstains on multiple faces. |
+| Tune local inference only on target hardware | OpenVINO separates latency and throughput optimisation. Test the existing latency hint with alternative thread limits, or independent head/landmark execution, only if a real device misses the capture cadence. [OpenVINO latency guidance](https://docs.openvino.ai/2026/openvino-workflow/running-inference/optimize-inference/optimizing-latency.html) | Compare p95 frame age, not just model calls per second. Keep bounded outstanding work and identical output checks. The single-image benchmark does not show how a low-power device behaves under sustained load. |
+
+These are proposals. They change assumptions or temporal behaviour and require labelled evidence before they should become defaults.
+
+## Research bets
+
+| Direction | Primary evidence | Bounded prototype and decision criterion |
+| --- | --- | --- |
+| Predict uncertainty and abstain based on measured risk | Gaze360 includes temporal information and predicts gaze uncertainty. Factor-Informed Uncertainty Distillation (ETRA 2026; arXiv submitted 22 July 2026) trains an uncertainty predictor using image-quality factors and reports selective-prediction improvements. [Gaze360](https://arxiv.org/abs/1910.10088), [FIUD](https://arxiv.org/abs/2607.20072) | Benchmark an uncertainty-aware model locally, including export/runtime cost. Plot false zone assignments against coverage on held-out shelf trials. A new score must be calibrated on relevant data; it must not be labelled gaze confidence merely because it correlates with source-dataset error. No weights or training code from these papers were run. |
+| Use 3D scene context | GA3CE (CVPR 2025) learns relationships between body/scene context and gaze, using 3D representations. It addresses settings where clear eye crops are unavailable. [GA3CE](https://arxiv.org/abs/2505.10671) | Prototype separately with measured camera geometry and an appropriate depth source. Compare with the current broad-zone baseline on the same labelled scenes and hardware. This needs more inputs and model work; published improvements do not establish a benefit for this installation. |
+
+The 2025 and 2026 papers were checked as primary research records and scoped candidates. This review did not reproduce their published results, audit their full training datasets, verify production-ready model exports or establish that any one method is the best available approach.
+
+## Physical evaluation still required
+
+The next experiment should record known target locations, equipment measurements and observation timestamps across centre and off-axis positions, distances, glasses, lighting, brief occlusion and zone transitions. Use separate tuning and evaluation sessions. Report a confusion matrix with an explicit unassigned category, coverage, wrong-zone rate among assigned samples, false offer activations and time to recover after a gap. Report results by capture condition rather than pooling away difficult cases.
+
+Keep any collection separate from the application review and agree its data handling before recording participants. The present repository stores no raw camera images or biometric templates. A labelled gaze target establishes the instructed target for an evaluation; it does not establish preference, identity, purchase intent or a sale.
+
+No physical gaze-accuracy number, shopper outcome or model-ranking score is available from this work. The delivered evidence is the corrected expiry behaviour, focused regression tests, verified model bytes and bounded publisher-image timing documented in [PERFORMANCE.md](PERFORMANCE.md).

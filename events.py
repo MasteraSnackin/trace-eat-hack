@@ -59,6 +59,9 @@ class Journey:
     def expire(self, now):
         if self.last_frame is not None and now - self.last_frame > MAX_SAMPLE_GAP:
             self.clear_dwell()
+            # The visit grace period cannot keep a zone offer alive once its
+            # supporting observations are too old to count towards dwell.
+            self.general()
         if self.last_seen is not None and now - self.last_seen > VISIT_GAP:
             self.end_visit("Visitor no longer visible; temporary ID discarded.")
         if self.last_frame is not None and now - self.last_frame > VISIT_GAP:

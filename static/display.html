@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="en-GB">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#eef0e7"><title>Shelf Trace · Customer display</title><link rel="stylesheet" href="/static/style.css"><script src="/static/display.js" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#eef0e7"><title>Shelf Trace · Customer display</title><link rel="stylesheet" href="/static/style.css"><script src="/static/client.js" defer></script><script src="/static/display.js" defer></script></head>
 <body class="display-body">
   <main class="customer-display">
+    <noscript><p class="notice warning">JavaScript is required to receive the current example offer.</p></noscript>
     <header class="display-header"><a class="wordmark" href="/" aria-label="Back to operator view"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Shelf Trace</a><span class="demo-label">Demonstration</span></header>
     <section class="display-message" aria-live="polite" aria-atomic="true"><p id="display-kicker" class="eyebrow">A little discovery</p><h1 id="display-title">Find your<br>next favourite.</h1><p id="display-detail">Explore something new on the shelf.</p><div class="display-art" aria-hidden="true"><div class="display-block display-block-one"></div><div class="display-block display-block-two"></div><div class="display-block display-block-three"></div></div></section>
-    <footer class="display-footer"><span>Example offers only · no real retailer discount</span><span id="display-status">Connecting to the local shelf…</span></footer>
+    <footer class="display-footer"><span>Example offers only · no real retailer discount</span><span id="display-status" role="status" aria-live="polite">Connecting to the local shelf…</span></footer>
   </main>
 </body>
 </html>

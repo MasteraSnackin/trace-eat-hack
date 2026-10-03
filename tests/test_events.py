@@ -1,4 +1,6 @@
-from events import Journey
+import pytest
+
+from events import Journey, MAX_SAMPLE_GAP, VISIT_GAP
 from geometry import ShelfConfig
 
 
@@ -52,6 +54,50 @@ def test_stale_display_expires_even_without_new_inference():
     assert state["camera_active"] is False
     assert state["session_id"] is None
     assert state["offer"]["kind"] == "general"
+
+
+@pytest.mark.parametrize("zone", ["left", "centre", "right"])
+@pytest.mark.parametrize("gap", [MAX_SAMPLE_GAP + 0.000001, 1.75, VISIT_GAP])
+def test_stale_offer_expires_with_dwell_before_visit_timeout(zone, gap):
+    j = Journey(ShelfConfig())
+    for now in (0, .75, 1.5):
+        before = at(j, now, zone)
+    assert before["offer"]["zone"] == zone
+
+    state = j.snapshot(1.5 + gap)
+
+    assert state["offer"]["kind"] == "general"
+    assert state["offer"]["zone"] is None
+    assert state["current_zone"] is None
+    assert state["dwell_s"] == 0
+    assert state["session_id"] == before["session_id"]
+    assert state["zone_totals"] == before["zone_totals"]
+    assert state["events"] == before["events"]
+
+
+def test_exact_sample_gap_keeps_current_offer():
+    j = Journey(ShelfConfig())
+    for now in (0, .75, 1.5):
+        at(j, now)
+    state = j.snapshot(1.5 + MAX_SAMPLE_GAP)
+    assert state["offer"]["zone"] == "left"
+    assert state["dwell_s"] == 1.5
+
+
+def test_resumed_samples_requalify_after_stale_offer_without_display_poll():
+    j = Journey(ShelfConfig())
+    for now in (0, .75, 1.5):
+        at(j, now)
+
+    state = at(j, 3.25)
+    assert state["offer"]["kind"] == "general"
+    assert state["session_id"] == "Visit 001"
+    assert state["dwell_s"] == 0
+    assert at(j, 4)["offer"]["kind"] == "general"
+    state = at(j, 4.75)
+    assert state["offer"]["zone"] == "left"
+    assert state["zone_totals"]["left"] == 3
+    assert sum(event["type"] == "offer_shown" for event in state["events"]) == 2
 
 
 def test_multiple_faces_clear_attribution_and_offer():

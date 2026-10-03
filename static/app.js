@@ -10,31 +10,28 @@ const zoneNames = { left: 'Protein bars', centre: 'Protein drinks', right: 'Prot
 let stream = null;
 let running = false;
 let starting = false;
+let stopping = false;
+let settingsBusy = false;
 let serviceReady = false;
 let generation = 0;
+let stateRevision = 0;
+let configRevision = 0;
 let frameTimer = null;
 let pendingFrame = null;
 let statusBusy = false;
 let configLoaded = false;
 let configDirty = false;
+let configInstance = null;
+let setupNeedsConfirmation = false;
+let pageActive = true;
 let cameraError = '';
 let lastEventSignature = '';
+let lastObservationAt = null;
 
 const asNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const words = (value) => String(value || '').replaceAll('_', ' ').replaceAll('-', ' ');
 
-async function request(path, options = {}) {
-  const response = await fetch(path, { cache: 'no-store', ...options });
-  let body;
-  try { body = await response.json(); } catch { body = {}; }
-  if (!response.ok) {
-    const detail = typeof body.detail === 'string' ? body.detail : typeof body.error === 'string' ? body.error : `The local service returned ${response.status}.`;
-    const error = new Error(detail);
-    error.status = response.status;
-    throw error;
-  }
-  return body;
-}
+const request = TraceClient.requestJSON;
 
 function banner(message, kind = '') {
   $('service-banner').textContent = message;
@@ -42,11 +39,14 @@ function banner(message, kind = '') {
 }
 
 function syncControls() {
-  $('start-camera').disabled = !serviceReady || running || starting;
-  $('start-camera').textContent = starting ? 'Opening camera…' : 'Start camera';
+  $('start-camera').disabled = !pageActive || !serviceReady || running || starting || stopping || settingsBusy || setupNeedsConfirmation || serverChanged();
+  $('start-camera').textContent = starting ? 'Opening camera…' : stopping ? 'Ending visit…' : 'Start camera';
   $('stop-camera').disabled = !running && !starting;
   $('camera-status').textContent = starting ? 'Starting' : running ? 'Camera on' : 'Camera off';
   $('camera-status').className = `pill${running ? ' live' : ''}`;
+  $('save-config').disabled = settingsBusy || stopping;
+  $('reset-run').disabled = settingsBusy || stopping;
+  $('config-form').setAttribute('aria-busy', String(settingsBusy));
 }
 
 function populateConfig(config) {
@@ -57,19 +57,43 @@ function populateConfig(config) {
   configLoaded = true;
 }
 
+function serverChanged() {
+  return Boolean(configInstance && TraceClient.session && configInstance !== TraceClient.session.instance);
+}
+
+function pauseForRestart() {
+  if (!serverChanged()) return false;
+  configInstance = TraceClient.session.instance;
+  configLoaded = false;
+  setupNeedsConfirmation = true;
+  serviceReady = false;
+  cameraError = '';
+  releaseCamera();
+  $('config-feedback').textContent = configDirty ? 'The service restarted. Your edits are kept. Review and save them before restarting the camera.' : 'The service restarted. Review the reloaded setup and save it before restarting the camera.';
+  banner('The local service restarted. Check the shelf setup and choose Save shelf setup before starting the camera.', 'warning');
+  syncControls();
+  return true;
+}
+
 async function refreshStatus() {
-  if (statusBusy) return;
+  if (statusBusy || !pageActive) return;
   statusBusy = true;
+  const revision = stateRevision;
   try {
     const data = await request('/api/status');
+    if (revision !== stateRevision || stopping || settingsBusy) return;
+    pauseForRestart();
     serviceReady = Boolean(data.ready);
     if (!configLoaded) populateConfig(data.config);
+    if (!configInstance) configInstance = TraceClient.session?.instance ?? null;
     if (!running && data.state) renderState(data.state);
     if (cameraError) banner(cameraError, 'error');
+    else if (setupNeedsConfirmation) banner('The local service restarted. Check the shelf setup and choose Save shelf setup before starting the camera.', 'warning');
     else if (!serviceReady) banner(data.model_error ? `Gaze model unavailable: ${data.model_error}` : 'The local gaze model is getting ready. Camera controls will become available when it is ready.', 'warning');
     else banner(running ? 'Estimating broad shelf zones locally. Unclear observations are left unassigned.' : 'Gaze service ready. Start the camera when the shelf and camera are in position.');
     syncControls();
   } catch {
+    if (revision !== stateRevision) return;
     serviceReady = false;
     banner('Cannot reach the local shelf service. Keep this page open and start or check the service; it will reconnect automatically.', 'error');
     syncControls();
@@ -100,7 +124,7 @@ function renderOffer(offer) {
   const specific = hasOffer && Boolean(zoneNames[offer.zone]);
   $('offer-kicker').textContent = specific ? `Explore / ${zoneNames[offer.zone]}` : 'A little discovery';
   $('offer-title').textContent = hasOffer ? String(offer.title) : 'Find your next favourite.';
-  $('offer-detail').textContent = hasOffer && offer.detail ? String(offer.detail) : 'A relevant example offer appears when attention settles on a shelf zone.';
+  $('offer-detail').textContent = hasOffer && offer.detail ? String(offer.detail) : 'An example offer appears after sustained estimated gaze towards a shelf zone.';
   $('offer-preview').classList.toggle('offer-active', specific);
 }
 
@@ -153,7 +177,7 @@ function renderObservation(data) {
   $('face-confidence').textContent = face && Number.isFinite(Number(face.confidence)) ? `${Math.round(Number(face.confidence) * 100)}%` : '—';
   $('inference-time').textContent = Number.isFinite(Number(data.inference_ms)) ? `${Math.round(Number(data.inference_ms))} ms` : '—';
   $('observation-dot').className = `observation-dot ${hasZone ? 'good' : 'warning'}`;
-  if (hasZone) $('observation-title').textContent = `Estimated attention · ${zone}`;
+  if (hasZone) $('observation-title').textContent = `Estimated gaze · ${zone}`;
   else if (faces.length > 1) $('observation-title').textContent = 'Multiple faces · not assigned';
   else if (!faces.length) $('observation-title').textContent = 'Waiting for one clear face';
   else $('observation-title').textContent = 'Gaze is not reliably measurable';
@@ -207,7 +231,9 @@ function cameraMessage(error) {
 }
 
 async function startCamera() {
-  if (running || starting || !serviceReady) return;
+  if (pauseForRestart()) { refreshStatus(); return; }
+  if (!pageActive || running || starting || stopping || settingsBusy || setupNeedsConfirmation || !serviceReady) return;
+  ++stateRevision;
   cameraError = '';
   if (!navigator.mediaDevices?.getUserMedia) {
     cameraError = 'Camera access is unavailable in this browser. Open this app on localhost in a browser that supports camera access.';
@@ -229,7 +255,7 @@ async function startCamera() {
     $('camera-stage').classList.add('running');
     $('camera-placeholder').hidden = true;
     $('camera-live-label').hidden = false;
-    for (const track of stream.getVideoTracks()) track.addEventListener('ended', () => { if (running) stopCamera('The camera disconnected. Reconnect it and start again.'); });
+    for (const track of stream.getVideoTracks()) track.addEventListener('ended', () => { if (running && token === generation) stopCamera('The camera disconnected. Reconnect it and start again.'); });
     syncControls();
     banner('Estimating broad shelf zones locally. Unclear observations are left unassigned.');
     inferFrame(token);
@@ -240,7 +266,14 @@ async function startCamera() {
 }
 
 async function inferFrame(token) {
-  if (!running || token !== generation) return;
+  if (!pageActive || !running || token !== generation) return;
+  if (pauseForRestart()) { refreshStatus(); return; }
+  if (settingsBusy) {
+    frameTimer = setTimeout(() => inferFrame(token), 333);
+    return;
+  }
+  const revision = stateRevision;
+  const session = TraceClient.session;
   const started = performance.now();
   try {
     if (!video.videoWidth || !video.videoHeight) throw new Error('The camera has not produced a frame yet.');
@@ -249,23 +282,36 @@ async function inferFrame(token) {
     capture.height = Math.round(video.videoHeight * scale);
     captureContext.drawImage(video, 0, 0, capture.width, capture.height);
     const blob = await new Promise((resolve) => capture.toBlob(resolve, 'image/jpeg', .78));
-    if (!blob || !running || token !== generation) return;
+    if (!running || token !== generation) return;
+    if (!blob) throw new Error('The browser could not encode a camera frame. Start the camera again.');
     $('frame-info').textContent = `${capture.width} × ${capture.height}`;
     const controller = new AbortController();
     pendingFrame = controller;
-    const timeout = setTimeout(() => controller.abort(), 20000);
     let result;
-    try { result = await request('/api/infer', { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: blob, signal: controller.signal }); }
-    finally { clearTimeout(timeout); if (pendingFrame === controller) pendingFrame = null; }
+    const headers = { 'Content-Type': 'image/jpeg' };
+    if (session) {
+      headers['X-Session-Instance'] = session.instance;
+      headers['X-Session-Generation'] = String(session.generation);
+    }
+    try { result = await request('/api/infer', { method: 'POST', headers, body: blob, signal: controller.signal, timeoutMs: 20000 }); }
+    finally { if (pendingFrame === controller) pendingFrame = null; }
     if (!running || token !== generation) return;
-    renderObservation(result);
-    if (result.state) renderState(result.state);
+    if (pauseForRestart()) { refreshStatus(); return; }
+    if (revision === stateRevision) {
+      renderObservation(result);
+      lastObservationAt = performance.now();
+      if (result.state) renderState(result.state);
+    }
   } catch (error) {
     if (!running || token !== generation) return;
-    if (error.status === 429) {
-      $('observation-title').textContent = 'Waiting for the gaze service';
-      $('observation-reason').textContent = 'An earlier frame is still being processed. The next frame will be sent shortly.';
-    } else if (error.status !== 409) {
+    if (pauseForRestart()) { refreshStatus(); return; }
+    if (revision !== stateRevision) {
+      // A setup change or reset invalidated this frame. The next frame resumes.
+    } else if (error.status === 429) {
+      clearObservation('Waiting for the gaze service', 'An earlier frame is still being processed. The next frame will be sent shortly.');
+    } else if (error.status === 409) {
+      clearObservation('Waiting for a fresh frame', error.code === 'frame_expired' ? 'The last frame took too long to process and was discarded. The next frame will be sent shortly.' : 'The previous frame belongs to an earlier visit or setup. Waiting for the next observation.');
+    } else {
       await stopCamera(error.name === 'AbortError' ? 'The gaze service did not respond in time. Check the service, then start the camera again.' : `Gaze estimation stopped: ${error.message}`);
       return;
     }
@@ -273,11 +319,40 @@ async function inferFrame(token) {
   if (running && token === generation) frameTimer = setTimeout(() => inferFrame(token), Math.max(0, 333 - (performance.now() - started)));
 }
 
-async function stopCamera(errorMessage = '') {
+function clearCurrentVisit() {
+  $('session-id').textContent = 'No current estimate';
+  $('current-dwell').textContent = '0.0';
+  renderOffer(null);
+  for (const card of document.querySelectorAll('.zone-card')) card.classList.remove('active');
+}
+
+function clearObservation(title, reason) {
+  lastObservationAt = null;
+  clearCurrentVisit();
+  overlayContext.clearRect(0, 0, overlay.width, overlay.height);
+  $('face-count').textContent = '—';
+  $('face-confidence').textContent = '—';
+  $('inference-time').textContent = '—';
+  $('observation-dot').className = 'observation-dot warning';
+  $('observation-title').textContent = title;
+  $('observation-reason').textContent = reason;
+}
+
+function finishSettingsFeedback(revision) {
+  if (revision !== stateRevision) return;
+  $('observation-dot').className = 'observation-dot';
+  $('observation-title').textContent = running ? 'Waiting for a fresh observation' : 'Camera is off';
+  $('observation-reason').textContent = running ? 'The next camera frame will use the current saved setup.' : 'Start the camera to begin a new visit.';
+}
+
+function releaseCamera() {
+  const revision = ++stateRevision;
   ++generation;
   running = false;
   starting = false;
+  lastObservationAt = null;
   clearTimeout(frameTimer);
+  frameTimer = null;
   pendingFrame?.abort();
   pendingFrame = null;
   stream?.getTracks().forEach((track) => track.stop());
@@ -295,49 +370,88 @@ async function stopCamera(errorMessage = '') {
   $('face-count').textContent = '—';
   $('face-confidence').textContent = '—';
   $('inference-time').textContent = '—';
+  clearCurrentVisit();
+  return revision;
+}
+
+async function stopCamera(errorMessage = '') {
+  if (stopping) return;
+  stopping = true;
+  const revision = releaseCamera();
   cameraError = errorMessage;
   syncControls();
   if (errorMessage) banner(errorMessage, 'error');
   else banner('Camera stopped. No frames are being captured.');
-  for (const card of document.querySelectorAll('.zone-card')) card.classList.remove('active');
-  try { const data = await request('/api/stop', { method: 'POST' }); renderState(data.state || data); }
-  catch { if (!errorMessage) banner('Camera stopped on this device. The local service could not be reached to end the visit.', 'warning'); }
+  try {
+    const data = await request('/api/stop', { method: 'POST' });
+    if (revision === stateRevision) renderState(data.state || data);
+  } catch {
+    serviceReady = false;
+    if (!errorMessage) banner('Camera stopped on this device. The service has not confirmed that the visit ended. Checking the connection automatically.', 'warning');
+  } finally { stopping = false; syncControls(); }
 }
 
-$('config-form').addEventListener('input', () => { configDirty = true; $('config-feedback').textContent = 'Unsaved changes'; });
+$('config-form').addEventListener('input', () => { ++configRevision; configDirty = true; $('config-feedback').textContent = 'Unsaved changes'; });
 $('config-form').addEventListener('submit', async (event) => {
   event.preventDefault();
+  if (settingsBusy || stopping) return;
+  settingsBusy = true;
+  const revision = ++stateRevision;
+  const submittedConfigRevision = configRevision;
+  pendingFrame?.abort();
+  clearObservation('Shelf setup is being saved', 'Current estimates are paused until the service confirms the setup.');
   const config = Object.fromEntries([...new FormData(event.currentTarget)].map(([key, value]) => [key, Number(value)]));
-  $('save-config').disabled = true;
+  syncControls();
   $('config-feedback').textContent = 'Saving…';
   try {
     const data = await request('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(config) });
-    configDirty = false;
-    populateConfig(data.config || data);
-    $('config-feedback').textContent = 'Shelf setup saved. Visit restarted.';
-    if (data.state) renderState(data.state);
+    configInstance = TraceClient.session?.instance ?? configInstance;
+    setupNeedsConfirmation = false;
+    if (submittedConfigRevision === configRevision) {
+      configDirty = false;
+      populateConfig(data.config || data);
+      $('config-feedback').textContent = 'Shelf setup saved. The next observation starts a new visit.';
+    } else $('config-feedback').textContent = 'Shelf setup saved. Your newer edits are not saved.';
+    if (revision === stateRevision && data.state) renderState(data.state);
   } catch (error) { $('config-feedback').textContent = `Could not save: ${error.message}`; }
-  finally { $('save-config').disabled = false; }
+  finally { settingsBusy = false; finishSettingsFeedback(revision); syncControls(); }
 });
 
 $('reset-run').addEventListener('click', async () => {
-  $('reset-run').disabled = true;
+  if (settingsBusy || stopping) return;
+  settingsBusy = true;
+  const revision = ++stateRevision;
+  pendingFrame?.abort();
+  clearObservation('Resetting the run', 'Waiting for the service to clear the previous visit.');
+  syncControls();
+  $('reset-run').textContent = 'Resetting…';
   try {
     const data = await request('/api/reset', { method: 'POST' });
+    if (revision !== stateRevision) return;
+    if (pauseForRestart()) { refreshStatus(); return; }
     lastEventSignature = '';
     renderState(data.state || data);
     cameraError = '';
     banner(running ? 'Run reset. The camera is continuing with a fresh visit.' : 'Run reset. Start the camera for a new observation.');
   } catch (error) { banner(`Could not reset the run: ${error.message}`, 'error'); }
-  finally { $('reset-run').disabled = false; }
+  finally { settingsBusy = false; $('reset-run').textContent = 'Reset run'; finishSettingsFeedback(revision); syncControls(); }
 });
 
 $('start-camera').addEventListener('click', startCamera);
 $('stop-camera').addEventListener('click', () => stopCamera());
 window.addEventListener('pagehide', () => {
-  stream?.getTracks().forEach((track) => track.stop());
-  pendingFrame?.abort();
-  if (running || starting) navigator.sendBeacon('/api/stop', '');
+  const hadCamera = running || starting;
+  pageActive = false;
+  releaseCamera();
+  serviceReady = false;
+  syncControls();
+  if (hadCamera) navigator.sendBeacon('/api/stop', '');
 });
+window.addEventListener('pageshow', () => { pageActive = true; refreshStatus(); });
 refreshStatus();
 setInterval(refreshStatus, 2500);
+setInterval(() => {
+  if (running && lastObservationAt !== null && performance.now() - lastObservationAt > 1500) {
+    clearObservation('Waiting for a fresh observation', 'The previous estimate has expired. Current gaze and offers will return when a fresh frame is processed.');
+  }
+}, 250);

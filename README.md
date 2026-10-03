@@ -1,14 +1,14 @@
 # Trace
 
-A local webcam experiment for understanding browsing at a shop shelf.
+A local webcam experiment to study how people browse a shop shelf.
 
 ## Description
 
-Trace estimates gaze towards three broad shelf zones, records continuous visits and shows an example offer after sustained gaze towards a zone. It is an EAT_HACK Retail Futures prototype for retailers and brands exploring what happens before checkout.
+Trace estimates gaze towards three broad shelf zones and records continuous visits. When gaze stays on a zone long enough, it shows an example offer. It is an EAT_HACK Retail Futures prototype for retailers and brands exploring what happens before checkout.
 
-Shoppers do not complete a calibration routine. The operator supplies the camera and shelf measurements. Gaze direction is an estimate: it does not establish preference or intent to buy. Product pickups, returning customers and purchases are not detected.
+The operator enters the camera and shelf measurements; shoppers do not need to complete a calibration routine. Estimated gaze does not establish preference or intent to buy. Trace does not detect product pickups, returning customers or purchases.
 
-The interface uses the name **Shelf Trace**. See [the review plan](PLAN.md) for the work completed against the nine supplied task briefs.
+The interface calls the app Shelf Trace. [The review plan](PLAN.md) lists the work completed for the nine supplied task briefs.
 
 ## Contents
 
@@ -35,7 +35,7 @@ The interface uses the name **Shelf Trace**. See [the review plan](PLAN.md) for 
 - Separate operator and customer views. Offers are demonstrations and cannot be redeemed.
 - Same-origin write controls, bounded input sizes and cancellation checks for stopped or reset sessions.
 
-The application does not save camera images, recordings or face embeddings. Visit IDs can split or merge observations; they are not counts of unique or recognised people.
+The app does not save camera images, recordings or face embeddings. A visit ID can split or merge observations, so the visit total does not count unique or recognised people.
 
 ## Tech stack
 
@@ -63,13 +63,13 @@ flowchart LR
     Files --> Vision
 ```
 
-The browser sends frames to a service on the same computer. The service estimates gaze, maps it onto the configured shelf and updates temporary state; the customer view polls that state. Model downloads happen during setup, and there is no external inference service or database.
+The browser sends frames to a service on the same computer. The service estimates gaze, maps it onto the configured shelf and updates the temporary state that the customer view polls. Models are downloaded during setup. The app has no external inference service or database.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and reliability limits.
 
 ## Installation
 
-Use Python 3.12, `curl` and a webcam. The commands below use a macOS or Linux shell; runtime checks were performed on an Apple M4 Max running macOS. Linux and Windows have not been validated. Node.js 22 or later is needed only for the JavaScript tests.
+You need Python 3.12, `curl` and a webcam. The commands below use a macOS or Linux shell. Runtime checks used an Apple M4 Max running macOS; Linux and Windows have not been validated. You only need Node.js 22 or later to run the JavaScript tests.
 
 ```sh
 git clone https://github.com/MasteraSnackin/trace-eat-hack.git
@@ -80,20 +80,22 @@ python3.12 -m venv .venv
 ./run.sh
 ```
 
-The downloader retrieves about 18.7 MB of model data from Intel's storage over verified HTTPS. It checks file sizes and SHA-384 hashes against pinned manifests. Internet access is needed to install dependencies and download models; the prepared app then runs locally without an API key.
+The downloader retrieves about 18.7 MB of model data from Intel's storage over verified HTTPS, then checks file sizes and SHA-384 hashes against pinned manifests. You need internet access to install dependencies and download models. After setup, the app runs locally without an API key.
 
 Model weights, virtual environments and caches are excluded from Git. Do not copy them into a commit.
 
 ## Usage
 
-Open the [operator view](http://127.0.0.1:4321), check the shelf settings, then choose **Start camera** and grant the browser's camera permission. Open the [customer display](http://127.0.0.1:4321/display) in a separate window or on another monitor. Keep the operator view visible for reliable frame timing, since browsers can throttle background tabs. Leaving or closing the page stops its capture session; returning does not restart the camera. Use one active operator window.
+Open the [operator view](http://127.0.0.1:4321), check the shelf settings, then choose **Start camera** and grant the browser's camera permission. Open the [customer display](http://127.0.0.1:4321/display) in a separate window or on another monitor.
+
+Use one active operator window and keep it visible for reliable frame timing. Browsers can throttle background tabs. Leaving or closing the page stops capture, and returning to it does not restart the camera.
 
 For a physical check:
 
 1. Mount a level webcam in the shelf plane, facing the shopper.
 2. Arrange three large, equal-width zones: bars, drinks and snacks, as seen by the shopper.
 3. Enter measured shelf dimensions and camera position, along with the approximate eye distance and camera field of view.
-4. With one person and clearly visible eyes, look towards known locations and compare them with the estimated zones. This tests the installation; it is not a calibration routine required of every shopper.
+4. Have one person with clearly visible eyes look towards known locations, then compare those locations with the estimated zones. This checks the installation. Shoppers do not need to repeat it.
 
 A laptop webcam can show gaze estimates, but shelf mapping requires the configured shelf to be in the camera's plane. The app does not measure depth or compensate for camera tilt or lens distortion. Glasses, lighting, occlusion, head movement and changes in distance can affect the result.
 
@@ -109,7 +111,7 @@ Open both views on the same chosen port. Do not bind the service to a public net
 
 ## Configuration
 
-There are no required environment variables or API keys. Settings are entered in the operator form or sent to `POST /api/config`; they are held in memory.
+You do not need environment variables or API keys. Enter settings in the operator form or send them to `POST /api/config`. The service keeps them in memory.
 
 | Setting | Default | Accepted range |
 | --- | --- | --- |
@@ -124,19 +126,19 @@ There are no required environment variables or API keys. Settings are entered in
 
 Left and right follow the shopper's view of the shelf. A positive camera offset is towards the shopper's right. The preview is unmirrored, so camera-image right corresponds to the shopper's left.
 
-Changing setup ends the current visit and clears its dwell. Aggregate totals remain until reset, so reset the run before comparing results from a new setup.
+Changing the setup ends the current visit and clears its dwell time. The accumulated totals remain until you reset the run. Reset them before comparing results from a new setup.
 
 ## Screenshots and demo
 
-[The audit report](docs/AUDIT.md) contains captured screens and the tested flows. These show the interface and its recovery states, not a validated shopping experiment.
+[The audit report](docs/AUDIT.md) includes screenshots of the tested flows and recovery states. They document the interface; they do not validate a shopping experiment.
 
 ![Trace operator view](docs/screenshots/06-after-operator.jpg)
 
-The audit includes short [before](docs/videos/before-setup-validation.mp4) and [after](docs/videos/after-setup-validation.mp4) browser recordings of setup validation. These camera-free debugging clips are separate from the EAT_HACK working-product submission video, which has not been added. A hosted live demo has not been added; the app runs on your computer.
+The audit's short [before](docs/videos/before-setup-validation.mp4) and [after](docs/videos/after-setup-validation.mp4) browser recordings show setup validation without using the camera. These debugging clips are separate from the EAT_HACK working-product submission video, which has not been added. A hosted live demo has not been added; the app runs on your computer.
 
 ## API and CLI reference
 
-All routes below are on the loopback server. Cross-origin writes are rejected. Use only one operator and one server process.
+The loopback server provides all the routes below and rejects cross-origin writes. Use one operator and one server process.
 
 | Method and route | Purpose |
 | --- | --- |
@@ -155,7 +157,7 @@ curl --fail http://127.0.0.1:4321/api/status
 curl --fail -X POST http://127.0.0.1:4321/api/reset
 ```
 
-Inference expects `Content-Type: image/jpeg`. Input is limited to 2,000,000 bytes and decoded dimensions between 120 and 1920 pixels per side. Concurrent inference receives HTTP 429; an obsolete session result receives 409. [Error handling](docs/ERROR_HANDLING.md) documents the error contract and recovery paths.
+Inference expects `Content-Type: image/jpeg`. Each input must be no larger than 2,000,000 bytes, with decoded dimensions between 120 and 1920 pixels per side. Concurrent inference receives HTTP 429; an obsolete session result receives 409. [Error handling](docs/ERROR_HANDLING.md) explains the error responses and how to recover.
 
 The model downloader accepts an alternate destination and a verification-only mode:
 
@@ -174,9 +176,9 @@ node --test tests/*.mjs
 .venv/bin/python scripts/download_models.py --verify-only
 ```
 
-Python tests cover geometry, dwell, offer expiry, validation and concurrent request handling. JavaScript tests cover client error and state handling. Fixtures are synthetic, and API tests use injected vision pipelines. Passing tests does not establish physical webcam performance or gaze accuracy.
+Python tests cover geometry, dwell, offer expiry, validation and concurrent request handling. The JavaScript tests cover how the client handles errors and state. Tests use synthetic fixtures, and API tests inject vision pipelines. Passing them does not establish physical webcam performance or gaze accuracy.
 
-[Model provenance](model-provenance.json) records separate checks using publisher samples. Current profiling and reproducible benchmark commands are in [PERFORMANCE.md](docs/PERFORMANCE.md). The [audit](docs/AUDIT.md) distinguishes automated, browser and unverified physical checks.
+[Model provenance](model-provenance.json) records separate checks using publisher samples. [PERFORMANCE.md](docs/PERFORMANCE.md) contains the current profiling results and commands to reproduce the benchmarks. The [audit](docs/AUDIT.md) separates automated and browser checks from physical checks that remain unverified.
 
 ## Roadmap
 
@@ -192,11 +194,11 @@ Open an [issue](https://github.com/MasteraSnackin/trace-eat-hack/issues) with a 
 
 This project has not assigned a licence to its original code. Agree contribution and reuse terms with the maintainer before contributing.
 
-For EAT_HACK, the local Python gaze service, shelf geometry, temporary visit logic and interfaces were developed for the event. The pretrained models and upstream [Open Model Zoo gaze demo](https://github.com/openvinotoolkit/open_model_zoo/tree/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp) existed beforehand. An earlier Shelf photo-to-advert application is separate and is not included here. These prior components must be disclosed in the submission.
+The local Python gaze service, shelf geometry, temporary visit logic and interfaces were developed for EAT_HACK. The pretrained models and upstream [Open Model Zoo gaze demo](https://github.com/openvinotoolkit/open_model_zoo/tree/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp) existed beforehand. The earlier Shelf photo-to-advert application is a separate project and is not included here. The submission must disclose these pre-existing components.
 
 ## Licence
 
-No licence has been assigned to the original application code. Public visibility does not grant a general reuse licence, and there is no root `LICENSE` file to claim otherwise.
+The original application code has no assigned licence, and there is no root `LICENSE` file. Making the repository public does not grant a general reuse licence.
 
 The selected model manifests specify Apache 2.0. The upstream text is in [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES/); Python dependencies retain their own licences. [model-provenance.json](model-provenance.json) records pinned model sources and hashes.
 

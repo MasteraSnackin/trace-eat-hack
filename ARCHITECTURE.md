@@ -4,7 +4,7 @@
 
 Trace is a local, single-process webcam application. A browser captures images, a Python service estimates gaze using OpenVINO, and a small state machine measures continuous gaze towards three configured shelf zones. A second browser view displays example offers.
 
-The intended experiment is a single visible visitor at a fixed shelf. The system does not identify returning shoppers, recognise products, confirm purchases or establish a person's intent. It trades physical accuracy and multi-person tracking for a small, inspectable prototype that runs without a paid inference API.
+The experiment is intended for a single visible visitor at a fixed shelf. The system does not identify returning shoppers, recognise products, confirm purchases or establish a person's intent. To keep the prototype small and easy to inspect, it accepts limits in physical accuracy and multi-person tracking. It runs without a paid inference API.
 
 ## Key requirements
 
@@ -34,7 +34,7 @@ flowchart TB
     Vendor[Official model storage] -. Verified setup downloads .-> Weights
 ```
 
-Only setup downloads cross the computer boundary. The running service uses loopback HTTP and memory rather than a database, queue, cloud service or public endpoint.
+Only setup downloads communicate beyond this computer. During operation, the service uses loopback HTTP and stores state in memory. It has no database, queue, cloud service or public endpoint.
 
 ## Component details
 
@@ -77,7 +77,7 @@ sequenceDiagram
     A-->>D: State response
 ```
 
-The server uses a monotonic clock for elapsed time. Native inference is serialised; it cannot be forcibly cancelled once running, so cancelled work remains excluded from the state and retains its execution slot until it finishes.
+The server uses a monotonic clock for elapsed time and runs native inference jobs one at a time. A running job cannot be forcibly cancelled. If its request is cancelled, its result cannot update the state, and it keeps its execution slot until it finishes.
 
 ### Stop, reset and setup changes
 
@@ -89,7 +89,7 @@ Each operation invalidates older inference work. The browser also invalidates pe
 
 The downloader reads `model-provenance.json`, checks existing files, downloads missing or invalid files to a temporary path, verifies size and SHA-384, then replaces the destination atomically. XML model files must also parse with the expected root element.
 
-At startup, the service attempts to construct the pipeline. If that fails, the interface remains available, status reports that the models are unavailable and inference is rejected. There is no fabricated fallback gaze result. The operator repairs the model installation and restarts the service.
+At startup, the service tries to create the pipeline. If this fails, the interface stays available and status reports that the models are unavailable. The service rejects inference requests without fabricating a fallback gaze result. To recover, the operator repairs the model installation and restarts the service.
 
 ## Data model
 
@@ -107,19 +107,19 @@ Visit IDs describe tracks, not identities. A short disappearance and reappearanc
 
 ## Infrastructure and deployment
 
-`run.sh` starts Uvicorn on `127.0.0.1:4321`. The browser and service run on the same computer; the customer view can use another window or monitor attached to it. Changing to another loopback port is supported through the documented Uvicorn command.
+`run.sh` starts Uvicorn on `127.0.0.1:4321`. The browser and service run on the same computer, and the customer view can use another window or monitor attached to it. To use another loopback port, follow the documented Uvicorn command.
 
-Development and demonstration use the same local runtime. There is no separate production environment, staging deployment, container definition, reverse proxy or Kubernetes configuration. The recorded platform is Python 3.12 on macOS with Apple silicon; other platforms need validation.
+Development and demonstration use the same local runtime. There is no separate production environment, staging deployment, container definition, reverse proxy or Kubernetes configuration. The recorded platform uses Python 3.12 on macOS with Apple silicon. Other platforms still need validation.
 
 One process owns all state. Running several workers or replicas would create separate visits, model instances and offer histories. The app must remain a single-worker local service unless the architecture changes deliberately.
 
 ## Scalability and reliability
 
-The browser submits one frame at a time and the API admits at most one native inference job. Contending requests receive a busy response instead of forming an unbounded queue. Body limits and JPEG dimension checks bound input work; the event deque bounds history.
+The browser submits one frame at a time and the API accepts at most one native inference job. Competing inference requests receive a busy response instead of joining an unbounded queue. Body limits and JPEG dimension checks limit the work needed to process input, while the event deque limits history.
 
 A gap beyond 1.5 seconds clears current gaze, dwell and any zone offer. The 2.5-second visit grace period is a separate continuity rule. These are prototype policy thresholds, not measured human-attention boundaries. The browser's display request deadline and local freshness checks provide additional protection when the service stalls.
 
-The app has no durable storage, failover or process supervisor. Restarting loses configuration and activity. A hung native call may require restarting the service; Python cannot safely terminate the running OpenVINO thread. Current measurements and limits are in [PERFORMANCE.md](docs/PERFORMANCE.md).
+The app has no durable storage, failover or process supervisor. Restarting it loses the configuration and activity. A hung native call may require a service restart because Python cannot safely terminate the running OpenVINO thread. Current measurements and limits are in [PERFORMANCE.md](docs/PERFORMANCE.md).
 
 ## Security and compliance
 
@@ -133,7 +133,7 @@ These controls describe the code, not a compliance certification. Any real retai
 
 The operator view shows service readiness, visible face count, model inference duration, gaze quality, current dwell and recent journey events. Detection confidence is labelled separately from gaze accuracy. The customer display shows an example offer or a general/offline message.
 
-API failures use a stable code and request identifier for correlation with local diagnostics. Durations use a monotonic clock. Stored event timestamps use UTC; the interface formats them in the browser's local time zone. There is no external telemetry dashboard, distributed tracing or persistent application event store configured by Trace. Third-party dependencies retain their own behaviour and licences.
+API failures include a stable code and request identifier so they can be matched to local diagnostics. Durations use a monotonic clock, while stored event timestamps use UTC. The interface formats those timestamps in the browser's local time zone. Trace does not configure an external telemetry dashboard, distributed tracing or a persistent application event store. Third-party dependencies retain their own behaviour and licences.
 
 ## Trade-offs and decisions
 
@@ -152,4 +152,4 @@ API failures use a stable code and request identifier for correlation with local
 
 The next physical experiment should compare known target locations with estimated zones across distances and lighting conditions. Record failures and abstention as well as successful estimates. No algorithm benchmark in this repository substitutes for that experiment.
 
-[RESEARCH.md](docs/RESEARCH.md) separates justified quick fixes from possible depth-aware mapping, calibrated uncertainty and longer research work. Pickup/return detection, checkout integration and repeat-visitor recognition remain separate product decisions, not hidden parts of this implementation.
+[RESEARCH.md](docs/RESEARCH.md) distinguishes justified quick fixes from possible depth-aware mapping, calibrated uncertainty and longer research work. Pickup/return detection, checkout integration and repeat-visitor recognition remain separate product decisions and are not implemented.

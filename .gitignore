@@ -1,0 +1,12 @@
+.venv/
+models/
+__pycache__/
+.pytest_cache/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+*.py[cod]
+coverage/
+.coverage

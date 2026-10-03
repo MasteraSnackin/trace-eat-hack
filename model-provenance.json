@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/openvinotoolkit/open_model_zoo",
+  "source_commit": "a6946b6d6ce42cbf4278df20275fab199655fc7d",
+  "precision": "FP16",
+  "models": [
+    {
+      "name": "face-detection-retail-0004",
+      "license": "Apache-2.0",
+      "manifest_url": "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/intel/face-detection-retail-0004/model.yml",
+      "files": [
+        {
+          "path": "face-detection-retail-0004/face-detection-retail-0004.xml",
+          "size": 143827,
+          "sha384": "a7f8d1d41998503c4f3cdd8c12275f04f1736e5142127edcb4c76c3e17188499390574095a5b2a9dd78d3d0f77d02034",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/face-detection-retail-0004/FP16/face-detection-retail-0004.xml"
+        },
+        {
+          "path": "face-detection-retail-0004/face-detection-retail-0004.bin",
+          "size": 1176544,
+          "sha384": "394185d3e42c34d7f9d43229ec8f5755c07e19fd6469d23883e71707fdd8eb66d90cbd62248db90ff3ba1c94adac599b",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/face-detection-retail-0004/FP16/face-detection-retail-0004.bin"
+        }
+      ]
+    },
+    {
+      "name": "facial-landmarks-35-adas-0002",
+      "license": "Apache-2.0",
+      "manifest_url": "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/intel/facial-landmarks-35-adas-0002/model.yml",
+      "files": [
+        {
+          "path": "facial-landmarks-35-adas-0002/facial-landmarks-35-adas-0002.xml",
+          "size": 361619,
+          "sha384": "91f2e878037b0e5ec3c9c5d9ce6486d1ee131cb9db892acaed04e422e30ea860c08e5ee09907b8df9538e2c504c13182",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/facial-landmarks-35-adas-0002/FP16/facial-landmarks-35-adas-0002.xml"
+        },
+        {
+          "path": "facial-landmarks-35-adas-0002/facial-landmarks-35-adas-0002.bin",
+          "size": 9190590,
+          "sha384": "78a517ec959e245311b5f1dc123a6e3123eb07000df1a37375fafbbbe3add942b247fb904bf5888a4f612d9679832759",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/facial-landmarks-35-adas-0002/FP16/facial-landmarks-35-adas-0002.bin"
+        }
+      ]
+    },
+    {
+      "name": "head-pose-estimation-adas-0001",
+      "license": "Apache-2.0",
+      "manifest_url": "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/intel/head-pose-estimation-adas-0001/model.yml",
+      "files": [
+        {
+          "path": "head-pose-estimation-adas-0001/head-pose-estimation-adas-0001.xml",
+          "size": 78824,
+          "sha384": "b92f6721a43f87fc5b7edda1d062cd05c97452c8990aa9517da5c959d9cdf4a75a05d3897d6b2bf5bab3dc530ac57947",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml"
+        },
+        {
+          "path": "head-pose-estimation-adas-0001/head-pose-estimation-adas-0001.bin",
+          "size": 3823816,
+          "sha384": "ff57525f97d3d837baf03344802a195b504148f8fc818844c15a89a9f742e770d411113685ec3f648417299bf443dde2",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.bin"
+        }
+      ]
+    },
+    {
+      "name": "gaze-estimation-adas-0002",
+      "license": "Apache-2.0",
+      "manifest_url": "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/intel/gaze-estimation-adas-0002/model.yml",
+      "files": [
+        {
+          "path": "gaze-estimation-adas-0002/gaze-estimation-adas-0002.xml",
+          "size": 99255,
+          "sha384": "840d76c3bc0693f5d10966dfa7cac193519227bfe4762d12d124f24395e3490bf54ec409a09c1e4f962e53900d8b6a14",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml"
+        },
+        {
+          "path": "gaze-estimation-adas-0002/gaze-estimation-adas-0002.bin",
+          "size": 3764742,
+          "sha384": "6b54573b16ef8a3ca0acf53b26a35215eba250024677081b37fa531a79b69d2dceb4d25dfd863439383e002f2162c81f",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.bin"
+        }
+      ]
+    },
+    {
+      "name": "open-closed-eye-0001",
+      "license": "Apache-2.0",
+      "manifest_url": "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/public/open-closed-eye-0001/model.yml",
+      "files": [
+        {
+          "path": "open-closed-eye-0001/open-closed-eye.onnx",
+          "size": 46164,
+          "sha384": "2615bce53b55620c629db21b043057600ccc53466f053c0a8277c43577c2db21e48f330cf9b15213016d17cddb8cba27",
+          "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/public/2022.1/open-closed-eye-0001/open_closed_eye.onnx"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Intel IR models consume BGR values 0..255 in NCHW layout; raw eye-state ONNX consumes BGR normalised as (pixel-127)/255.",
+    "Eye-state class order follows official C++ demo: index1=open. Verified on upstream example images: 1.png and3.png visibly open with p(open)=1.0;2.png visibly closed with p(open)=0.0000087. Model README reverses class names.",
+    "Gaze API convention is x=image right, y=image up, z=towards camera. Model z is negated to make frontal gaze positive; x/y match official demo arrows. A learned direction is not a calibrated fixation or attention probability."
+  ],
+  "local_smoke_validation": {
+    "date": "2026-10-03",
+    "runtime": "2026.4.1-22982-e213a147257-releases/2026/4",
+    "device": "CPU",
+    "video_source": "https://github.com/intel-iot-devkit/sample-videos/blob/master/head-pose-face-detection-female-and-male.mp4",
+    "sampled_frames": 72,
+    "face_quality_counts": {
+      "ok": 93,
+      "head_pose_extreme": 21,
+      "eyes_closed": 20,
+      "eye_state_uncertain": 6
+    },
+    "normalised_vectors_checked": 93,
+    "median_inference_ms": 8.29,
+    "max_inference_ms": 29.92,
+    "checks": [
+      "blank frame returns no faces",
+      "invalid frame shapes/dtype rejected",
+      "small-face/eyes rejected",
+      "finite JSON output",
+      "unit gaze norm",
+      "upstream open/closed eye images classify with index1=open",
+      "official up-right gaze image yields positive API x,y,z"
+    ],
+    "limits": [
+      "No webcam access or shelf geometry validated",
+      "No accuracy benchmark or shopper trial",
+      "Timing includes inference only, not capture/transport/UI"
+    ],
+    "platform": {
+      "architecture": "arm64",
+      "python": "3.12.14",
+      "system": "Darwin",
+      "opencv_input": "BGR uint8; video768x432; selected frames2seconds apart"
+    },
+    "inputs": [
+      {
+        "source_url": "https://raw.githubusercontent.com/openvinotoolkit/open_model_zoo/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/public/open-closed-eye-0001/assets/1.png",
+        "size": 3344,
+        "sha256": "caa5aa6235fb08d4d338c7a05e51a57ed8b6bc2ef05227631da38d8e3dc80600",
+        "observation": "visually open",
+        "eye_open_probability_index1": 1.0
+      },
+      {
+        "source_url": "https://raw.githubusercontent.com/openvinotoolkit/open_model_zoo/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/public/open-closed-eye-0001/assets/2.png",
+        "size": 10265,
+        "sha256": "e8e1c2844c7f437c20344bf913b4d147f6d0a20cea48d24f58c11d369d2505e5",
+        "observation": "visually closed",
+        "eye_open_probability_index1": 8.702278137207031e-06
+      },
+      {
+        "source_url": "https://raw.githubusercontent.com/openvinotoolkit/open_model_zoo/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/public/open-closed-eye-0001/assets/3.png",
+        "size": 4870,
+        "sha256": "d280df03e143749a3a45bf44c938ff2bf9a1dbe119f2d9059d1a3de0ee895b86",
+        "observation": "visually open",
+        "eye_open_probability_index1": 1.0
+      },
+      {
+        "source_url": "https://raw.githubusercontent.com/openvinotoolkit/open_model_zoo/a6946b6d6ce42cbf4278df20275fab199655fc7d/models/intel/gaze-estimation-adas-0002/assets/ill_for_gaze.png",
+        "size": 145802,
+        "sha256": "1a146a14a807ff08f6ded73d32b7e4efc3a8df3d89f04c001af5e90fa65f5a25",
+        "observation": "upstream annotated up-right gaze; direction check only, not ground truth",
+        "eye_open_probability_index1": null
+      },
+      {
+        "source_url": "https://raw.githubusercontent.com/intel-iot-devkit/sample-videos/master/head-pose-face-detection-female-and-male.mp4",
+        "size": 16788193,
+        "sha256": "650166430c4bf9ddc470ac17a86d1fcbd6d76c64e60ed73675fdc6b3e3d3af38",
+        "observation": "official demo video, sampled every2seconds 0..142",
+        "eye_open_probability_index1": null
+      }
+    ],
+    "annotated_gaze_api_vector": [
+      0.44479534964233736,
+      0.1661796177249738,
+      0.88008035518885
+    ],
+    "annotated_gaze_roll_corrected_raw_vector": [
+      0.44479534964233736,
+      0.1661796177249738,
+      -0.88008035518885
+    ],
+    "protocol": "After blank-frame warmup, infer one decoded frame at each even second0..142. Assert finite JSON and unit vectors, collect stage rejection counts. Timing covers inference call only, excludes model compilation, decoding, camera and transport."
+  },
+  "source_references": [
+    "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/face_detector.cpp",
+    "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/landmarks_estimator.cpp",
+    "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/gaze_estimator.cpp",
+    "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/eye_state_estimator.cpp",
+    "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/results_marker.cpp",
+    "https://github.com/openvinotoolkit/open_model_zoo/blob/a6946b6d6ce42cbf4278df20275fab199655fc7d/demos/gaze_estimation_demo/cpp/src/utils.cpp"
+  ],
+  "adaptation_notice": {
+    "author": "Shelf Trace prototype",
+    "date": "2026-10-03",
+    "description": "Python implementation adapted from Intel Apache-2.0 C++ gaze demo. Changes: synchronous CPU models; typed dictionary output; no frame retention; expanded quality gating; raw eye-state ONNX preprocessing; z sign normalised towards camera; no face identification. Eye class order verified against upstream demo examples because README labels disagree.",
+    "upstream_copyright": "Copyright (C) 2018-2024 Intel Corporation",
+    "licence_file": "THIRD_PARTY_LICENSES/Open_Model_Zoo_APACHE_2.0.txt"
+  }
+}

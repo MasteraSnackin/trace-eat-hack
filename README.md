@@ -1,14 +1,38 @@
-# Trace
+# Shelf Trace
 
 A local webcam experiment to study how people browse a shop shelf.
 
 ## Description
 
-Sales records show what shoppers bought, but leave much of their browsing unrecorded. Trace is an **EAT_HACK Retail Futures prototype** for exploring what happens before checkout without asking survey questions.
+The description below covers the newer local Shelf Trace prototype for **EAT_HACK Retail Futures**. That implementation has not yet been added to this repository. The run instructions, feature reference, screenshots, system map and pitch deck here describe the earlier gaze-and-offer build available in this checkout.
 
-The app estimates gaze towards three broad shelf zones, groups observations into temporary visits and shows an example offer after sustained gaze. The operator enters camera and shelf measurements; shoppers do not complete a calibration routine. The interface calls the app **Shelf Trace**.
+A till tells you what sold. It doesn’t tell you what happened before that decision.
 
-Physical gaze accuracy remains unverified. Estimated gaze does not establish preference or purchase intent, and trend forecasting is future work. See [current limits](#current-limits).
+What caught someone’s attention? What did they pick up, consider, then put back? And could the right offer have helped them choose?
+
+That’s the problem behind **Shelf Trace**.
+
+Online retailers can study clicks and abandoned baskets. In a physical shop, much of that journey is missing. Asking shoppers questions interrupts the experience and doesn’t always reveal what actually happened.
+
+Shelf Trace is a prototype that explores that missing journey using one webcam and a nearby customer screen.
+
+It brings together three functions.
+
+First, **track attention**. The camera estimates which broad shelf area someone looks towards and measures how long valid observations continue.
+
+Second, **capture signals of shopping intention**. The camera detects visible hands and watches marked product positions to infer when an item is picked up and replaced.
+
+Those actions help reveal the difference between passing a shelf and considering a product. They are signals of possible interest, not proof of what someone thinks or why they put something back.
+
+Third, **respond with a custom discount**. The current rules use observed viewing time, the time of day and stock quantities entered by the retailer. Someone browsing longer could see an additional discount. Higher stock could justify a stronger offer, within a retailer-set limit.
+
+Every offer explains its rules. Personalisation uses anonymous browsing behaviour, without identifying faces or guessing demographics. Discounts are examples only; the prototype does not redeem offers or record purchases.
+
+The operator can review shelf observations and export a report. Next comes real shelf testing, followed by exploring how reliable pickup and put-back signals could inform offers.
+
+**Shelf Trace turns overlooked shelf activity into useful signals and creates an opportunity to offer something relevant before the shopper walks away.**
+
+Physical shelf accuracy remains unverified. Estimated gaze and inferred product events do not establish attention, preference or purchase intent. Trend forecasting remains future work.
 
 ## Pitch deck
 
@@ -47,7 +71,7 @@ This 20-second loop shows the dashboard, a rejected camera height, a corrected s
 
 ## Features
 
-The operator uses the main page. The customer screen is at `/display`.
+These features describe the earlier build included in this repository. The operator uses the main page. The customer screen is at `/display`.
 
 | Function | Current behaviour |
 | --- | --- |
@@ -63,6 +87,8 @@ The operator uses the main page. The customer screen is at `/display`.
 | Local API | Exposes readiness, settings, visits, dwell, offers and events, and accepts frames and control requests. See the [route reference](#api-and-cli-reference). |
 
 ### Current limits
+
+These limits apply to the code in this checkout.
 
 - One active operator and one camera, with one clear face needed for zone attribution. Temporary visits can split or merge observations, so their total is not a count of unique shoppers.
 - Protein categories and offers are fixed examples. There is no product recognition, pickup or purchase detection, returning-customer identification, demographic inference or redeemable discount.

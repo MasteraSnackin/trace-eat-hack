@@ -4,36 +4,31 @@ A local webcam experiment to study how people browse a shop shelf.
 
 ## Description
 
-Sales records show what shoppers bought, but leave much of the browsing journey unrecorded. Retailers and brands may also want to know which parts of a shelf people look towards and how that changes over time. Trace explores whether local webcam gaze estimates can help fill that gap without asking shoppers survey questions.
+Sales records show what shoppers bought, but leave much of their browsing unrecorded. Trace is an EAT_HACK Retail Futures prototype for retailers and brands exploring what happens before checkout. It uses local webcam gaze estimates to study which parts of a shelf people look towards and how that changes over time, without asking survey questions.
 
-Trace estimates gaze towards three broad shelf zones and records continuous visits. When gaze stays on a zone long enough, it shows an example offer. It is an EAT_HACK Retail Futures prototype for retailers and brands exploring what happens before checkout.
+The app estimates gaze towards three broad shelf zones, groups observations into temporary visits and shows an example offer after sustained gaze towards a zone. The operator enters the camera and shelf measurements; shoppers do not complete a calibration routine.
 
-The operator enters the camera and shelf measurements; shoppers do not need to complete a calibration routine. Estimated gaze does not establish preference or intent to buy. Trace does not detect product pickups, returning customers or purchases.
+Estimated gaze does not establish preference or intent to buy. Trace does not detect product pickups, returning customers or purchases. Physical gaze accuracy remains unverified, and trend forecasting is not implemented. The [forecasting plan](#path-to-trend-forecasting) explains the data and validation needed to take this measurement prototype further.
 
-The current build is a measurement prototype. Physical gaze accuracy remains unverified, and trend forecasting is not implemented. The [forecasting plan](#path-to-trend-forecasting) explains the data and validation needed to develop it further.
+The interface calls the app Shelf Trace. Start with [installation](#installation), watch the [quick tour](#quick-tour), browse the [screenshots](#screenshots-and-demo), or explore the [Trace system map](#interactive-trace-system). The [architecture guide](ARCHITECTURE.md) covers the technical details.
 
-The interface calls the app Shelf Trace. Start with [installation](#installation), see the [animated walkthrough and screenshots](#screenshots-and-demo), explore the [Trace system map](#interactive-trace-system), or read the [architecture guide](ARCHITECTURE.md).
+## Quick tour
+
+The 20-second loop below follows the operator dashboard, an invalid camera height, the corrected setup being saved and the idle customer display. It uses real browser captures, with each state held briefly for readability. The camera stays off throughout.
+
+![Animated Trace walkthrough showing the dashboard, setup validation, a successful save and the idle customer display](docs/videos/trace-ui-walkthrough.gif)
+
+[Watch or download the MP4](docs/videos/trace-ui-walkthrough.mp4) for playback controls. The [screenshots and explanations](#screenshots-and-demo) describe each screen in more detail.
 
 ## Contents
 
-- [Description](#description)
-- [Functions available now](#features)
-- [Current limits](#current-limits)
-- [Tech stack](#tech-stack)
-- [Architecture overview](#architecture-overview)
-- [Interactive Trace system](#interactive-trace-system)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Troubleshooting](#troubleshooting)
-- [Configuration](#configuration)
-- [Screenshots and demo](#screenshots-and-demo)
-- [API and CLI reference](#api-and-cli-reference)
-- [Tests](#tests)
-- [Roadmap](#roadmap)
-- [Path to trend forecasting](#path-to-trend-forecasting)
-- [Contributing](#contributing)
-- [Licence](#licence)
-- [Contact and support](#contact-and-support)
+| What you want to do | Where to go |
+| --- | --- |
+| See what Trace does | [Description](#description), [quick tour](#quick-tour), [current functions](#features), [limits](#current-limits), [screenshots](#screenshots-and-demo) |
+| Run it locally | [Installation](#installation), [usage](#usage), [configuration](#configuration), [troubleshooting](#troubleshooting) |
+| Understand the system | [Tech stack](#tech-stack), [architecture overview](#architecture-overview), [interactive map](#interactive-trace-system), [API and CLI reference](#api-and-cli-reference) |
+| Review evidence and plans | [Tests](#tests), [roadmap](#roadmap), [path to trend forecasting](#path-to-trend-forecasting) |
+| Contribute or get help | [Contributing](#contributing), [licence](#licence), [contact and support](#contact-and-support) |
 
 ## Features
 
@@ -64,7 +59,7 @@ Settings, totals and recent events live in memory. A server restart discards the
 
 Search trends, social media and retailer sales are not connected, and future-trend prediction is not implemented. The [forecasting plan](#path-to-trend-forecasting) describes that proposed work.
 
-The [software audit](docs/AUDIT.md) records automated checks and browser checks with the camera off. Physical shelf gaze accuracy remains unverified. The [animated walkthrough](#screenshots-and-demo) demonstrates controls and setup feedback; it does not demonstrate live gaze tracking.
+The [software audit](docs/AUDIT.md) records automated checks and browser checks with the camera off. Physical shelf gaze accuracy remains unverified. The [animated walkthrough](#quick-tour) demonstrates controls and setup feedback; it does not demonstrate live gaze tracking.
 
 ## Tech stack
 
@@ -102,9 +97,18 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and rel
 
 Explore how a camera frame becomes a shelf-zone estimate, how the customer display receives updates and how model files are installed.
 
-![Trace system map showing model setup, camera processing, shelf geometry, visit state and customer display updates](docs/diagrams/trace-system-light.jpg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/trace-system-dark.jpg">
+  <img src="docs/diagrams/trace-system-light.jpg" alt="Trace system map showing model setup, camera processing, shelf geometry, visit state and customer display updates">
+</picture>
 
-The image above is a preview. [Get the interactive HTML](docs/diagrams/trace-system.html) to search for components, select a node for its explanation and source links, or follow the guided views below. On GitHub, choose **Download raw file**, then open the saved `trace-system.html` in your browser. If you have cloned the repository, open `docs/diagrams/trace-system.html` directly. The viewer works locally without starting the webcam app.
+The preview follows your browser's light or dark colour preference. Open the interactive viewer to search for components, inspect source links and select one of the guided views listed below:
+
+1. [Get the interactive HTML](docs/diagrams/trace-system.html) and choose **Download raw file** on GitHub.
+2. Open the saved `trace-system.html` in your browser. If you have cloned the repository, open `docs/diagrams/trace-system.html` directly.
+3. Select **Frame to offer**, **Customer display** or **Model setup**. Select a component for its explanation and source links.
+
+The viewer works locally without starting the webcam app.
 
 | Guided view | What it explains |
 | --- | --- |
@@ -197,11 +201,7 @@ Changing the setup ends the current visit and clears its dwell time. The accumul
 
 This walkthrough shows the operator controls, shelf estimates, setup feedback and separate customer screen. The captures were taken on 3 October 2026. The detailed views use a separate local session with the camera off; the only recorded activity is a saved setup. They explain the interface and do not demonstrate physical gaze accuracy or a forecast.
 
-The 20-second loop below follows the operator dashboard, an invalid camera height, the corrected setup being saved and the idle customer display. It uses real browser captures, with each state held briefly for readability. The camera stays off throughout.
-
-![Animated Trace walkthrough showing the dashboard, setup validation, a successful save and the idle customer display](docs/videos/trace-ui-walkthrough.gif)
-
-[Watch or download the MP4](docs/videos/trace-ui-walkthrough.mp4) for playback controls. The still images below explain each part of the interface.
+The [quick tour](#quick-tour) shows the sequence as an animation. The still images below explain each part of the interface.
 
 Jump to [camera controls](#camera-controls), [shelf figures](#reading-the-shelf-figures), [setup and activity](#shelf-setup-and-activity), [validation](#when-measurements-do-not-fit) or the [customer display](#customer-display).
 

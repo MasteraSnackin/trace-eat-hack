@@ -12,12 +12,13 @@ The operator enters the camera and shelf measurements; shoppers do not need to c
 
 The current build is a measurement prototype. Physical gaze accuracy remains unverified, and trend forecasting is not implemented. The [forecasting plan](#path-to-trend-forecasting) explains the data and validation needed to develop it further.
 
-The interface calls the app Shelf Trace. Start with [installation](#installation), see the [operator screenshot](#screenshots-and-demo), or read the [architecture guide](ARCHITECTURE.md).
+The interface calls the app Shelf Trace. Start with [installation](#installation), see the [animated walkthrough and screenshots](#screenshots-and-demo), or read the [architecture guide](ARCHITECTURE.md).
 
 ## Contents
 
 - [Description](#description)
-- [Features](#features)
+- [Functions available now](#features)
+- [Current limits](#current-limits)
 - [Tech stack](#tech-stack)
 - [Architecture overview](#architecture-overview)
 - [Installation](#installation)
@@ -35,14 +36,34 @@ The interface calls the app Shelf Trace. Start with [installation](#installation
 
 ## Features
 
-- Local CPU inference with five OpenVINO models for faces, landmarks, head pose, eye state and gaze direction.
-- Approximate left, centre and right shelf zones, with uncertain observations left unassigned.
-- Temporary visit IDs, continuous gaze duration and a bounded event history held in memory.
-- Example offers after a configurable dwell threshold, with a general message when the signal becomes unclear or stale.
-- Separate operator and customer views. Offers are demonstrations and cannot be redeemed.
-- Same-origin write controls, bounded input sizes and cancellation checks for stopped or reset sessions.
+These functions are implemented in the current local build. The operator uses the main page; the customer screen is at `/display`.
 
-The app does not save camera images, recordings or face embeddings. A visit ID can split or merge observations, so the visit total does not count unique or recognised people.
+| Function | What it does now |
+| --- | --- |
+| Start and stop the camera | **Start camera** requests browser permission and begins local processing. **Stop** releases the webcam, ends the current visit and clears its estimate and offer while keeping run totals and activity. |
+| Show the camera estimates | Displays an unmirrored preview with face boxes and gaze arrows where available, plus detected face count, face detection confidence and inference time. Face confidence is not a gaze-accuracy score. |
+| Estimate a shelf zone | Uses the camera and shelf measurements to assign a usable gaze estimate to the left, centre or right zone. Unclear views, multiple faces and estimates outside the shelf or near zone boundaries remain unassigned. |
+| Measure estimated gaze time | Shows continuous dwell for the current zone and accumulated seconds per zone during the run. Unclear observations break continuous dwell. A gap of more than 1.5 seconds clears continuous dwell and is not added to the totals. |
+| Group observations into visits | Creates temporary labels such as `Visit 001` and shows a visit count. Continuity uses face position and short gaps in visibility. It does not recognise a person's identity. |
+| Trigger an example offer | Sustained estimated gaze can show a protein bar, drink or snack offer after the dwell threshold, which defaults to 1.5 seconds. The offer hold setting defaults to 8 seconds and limits switching between valid zone offers. Unclear or stale observations clear the zone offer. |
+| Run a separate customer display | Shows the current example offer or a general discovery message in another window or on a monitor attached to the same computer. It reads local state without opening a second camera. If the connection fails, it clears the offer and retries automatically. |
+| Configure and validate the shelf | Saves shelf size, camera position, approximate eye distance, field of view, dwell threshold and offer hold time. Invalid values produce a specific error and leave the saved setup unchanged. A successful save ends the current visit while retaining run totals. |
+| Review recent activity | Lists visit starts and ends, qualifying zone dwell, displayed offers and setup changes, with timestamps. The dashboard shows the latest 12 events; the local API exposes up to 80 retained events. |
+| Reset a run | **Reset run** clears visits, accumulated zone totals, activity and the current offer while retaining shelf settings. Camera capture continues if it was running; use **Stop** to release it. |
+| Recover from interruptions | Shows model, camera, validation and connection errors. After detecting a service restart, it stops capture and requires a successful setup save before restarting. Returning to the page after navigation leaves the camera off. |
+| Read and control the local service | The [JSON API](#api-and-cli-reference) exposes model readiness, settings, current visit, dwell totals, offers and recent events. It also accepts setup changes, JPEG frames, stop and reset requests. |
+
+Processing uses five OpenVINO models on CPU for faces, landmarks, head pose, eye state and gaze direction. After installation and model download, it runs without an external inference service or API key. Same-origin write controls, bounded inputs and cancellation checks protect the local request flow.
+
+### Current limits
+
+Trace currently supports one active operator and one camera, with one clear face needed for zone attribution. The three protein categories and their offers are fixed demonstration examples. It does not recognise individual products, detect pickups or purchases, identify returning customers, infer demographics or provide redeemable discounts. A temporary visit can split or merge observations, so the total is not a count of unique shoppers.
+
+Settings, totals and recent events live in memory. A server restart discards them. There is no database, saved browsing history or CSV export button. The app does not save camera images, recordings or face embeddings.
+
+Search trends, social media and retailer sales are not connected, and future-trend prediction is not implemented. The [forecasting plan](#path-to-trend-forecasting) describes that proposed work.
+
+The [software audit](docs/AUDIT.md) records automated checks and browser checks with the camera off. Physical shelf gaze accuracy remains unverified. The [animated walkthrough](#screenshots-and-demo) demonstrates controls and setup feedback; it does not demonstrate live gaze tracking.
 
 ## Tech stack
 

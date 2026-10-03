@@ -12,7 +12,7 @@ The operator enters the camera and shelf measurements; shoppers do not need to c
 
 The current build is a measurement prototype. Physical gaze accuracy remains unverified, and trend forecasting is not implemented. The [forecasting plan](#path-to-trend-forecasting) explains the data and validation needed to develop it further.
 
-The interface calls the app Shelf Trace. Start with [installation](#installation), see the [animated walkthrough and screenshots](#screenshots-and-demo), or read the [architecture guide](ARCHITECTURE.md).
+The interface calls the app Shelf Trace. Start with [installation](#installation), see the [animated walkthrough and screenshots](#screenshots-and-demo), explore the [Trace system map](#interactive-trace-system), or read the [architecture guide](ARCHITECTURE.md).
 
 ## Contents
 
@@ -21,6 +21,7 @@ The interface calls the app Shelf Trace. Start with [installation](#installation
 - [Current limits](#current-limits)
 - [Tech stack](#tech-stack)
 - [Architecture overview](#architecture-overview)
+- [Interactive Trace system](#interactive-trace-system)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
@@ -95,9 +96,25 @@ flowchart LR
 
 Both browser views communicate with the API on the same computer. The API runs the models, maps gaze onto the shelf and updates visit state. The customer view polls the API for a JSON snapshot; it does not receive camera frames or read Python state directly. Models are downloaded during setup. The app has no external inference service or database.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and reliability limits. The [interactive system map](docs/diagrams/trace-system.html) includes source links and guided views. GitHub displays its HTML source; download the file and open it in a browser to use the viewer. Its [editable diagram data](docs/diagrams/trace-system.architecture.json) is included.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for request flows, data ownership and reliability limits.
 
-A [screenshot of the map](docs/diagrams/trace-system-light.jpg) is available without opening the viewer.
+### Interactive Trace system
+
+Explore how a camera frame becomes a shelf-zone estimate, how the customer display receives updates and how model files are installed.
+
+![Trace system map showing model setup, camera processing, shelf geometry, visit state and customer display updates](docs/diagrams/trace-system-light.jpg)
+
+The image above is a preview. [Get the interactive HTML](docs/diagrams/trace-system.html) to search for components, select a node for its explanation and source links, or follow the guided views below. On GitHub, choose **Download raw file**, then open the saved `trace-system.html` in your browser. If you have cloned the repository, open `docs/diagrams/trace-system.html` directly. The viewer works locally without starting the webcam app.
+
+| Guided view | What it explains |
+| --- | --- |
+| Frame to offer | Follows camera data through the frame API, vision pipeline, shelf geometry and temporary visit state. |
+| Customer display | Shows how the customer page polls the state API and receives the current message or example offer. |
+| Model setup | Follows the download, size and checksum checks, local model files and model loading for inference. |
+
+Select **Show all** to return to the complete map. The viewer also has zoom, pan and light/dark themes. Source links open the code at revision `cacc96fc7d41` and require internet access. This is a map of the implementation; it does not show live camera activity or validate gaze accuracy.
+
+GitHub supports the Mermaid overview above but removes custom scripts from rendered Markdown, so this HTML viewer cannot run inside the README itself. See [GitHub's rendering rules](https://github.com/github/markup#github-markup). The [editable diagram data](docs/diagrams/trace-system.architecture.json) is included for future updates.
 
 ## Installation
 
